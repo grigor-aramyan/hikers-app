@@ -32,4 +32,5 @@ dependencies {
     compile 'net.gotev:uploadservice-okhttp:3.0.1'
     compile 'com.google.android.gms:play-services-maps:9.4.0'
     compile 'com.google.android.gms:play-services-location:9.4.0'
+    compile 'com.github.ParkSangGwon:TedPicker:v1.0.10'
 }

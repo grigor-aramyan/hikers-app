@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+<LinearLayout
+                  android:orientation="vertical"
+                  android:layout_width="match_parent"
+                  android:layout_height="550dp">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="300dp"
         android:orientation="vertical">
         <TextView
             android:layout_width="wrap_content"
@@ -36,47 +38,50 @@
             android:id="@+id/map_img_id"
             android:src="@drawable/map_icon"
             android:layout_marginTop="10dp"/>
-        <LinearLayout
+        <HorizontalScrollView
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:id="@+id/tour_imgs_id"
-            android:orientation="horizontal">
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="150dp"
-                android:id="@+id/img_1_id"
-                android:src="@mipmap/ic_launcher"/>
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="150dp"
-                android:id="@+id/img_2_id"
-                android:src="@mipmap/ic_launcher"/>
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="150dp"
-                android:id="@+id/img_3_id"
-                android:src="@mipmap/ic_launcher"/>
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="150dp"
-                android:id="@+id/img_4_id"
-                android:src="@mipmap/ic_launcher"/>
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="150dp"
-                android:id="@+id/img_5_id"
-                android:src="@mipmap/ic_launcher"/>
-        </LinearLayout>
+            android:layout_height="150dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/tour_imgs_id"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="150dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/img_1_id"
+                    android:src="@mipmap/ic_launcher"
+                    android:layout_marginRight="8dp"/>
+                <ImageView
+                    android:layout_marginRight="8dp"
+                    android:layout_width="150dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/img_2_id"
+                    android:src="@mipmap/ic_launcher"/>
+                <ImageView
+                    android:layout_marginRight="8dp"
+                    android:layout_width="150dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/img_3_id"
+                    android:src="@mipmap/ic_launcher"/>
+                <ImageView
+                    android:layout_marginRight="8dp"
+                    android:layout_width="150dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/img_4_id"
+                    android:src="@mipmap/ic_launcher"/>
+                <ImageView
+                    android:layout_marginRight="8dp"
+                    android:layout_width="150dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/img_5_id"
+                    android:src="@mipmap/ic_launcher"/>
+            </LinearLayout>
+        </HorizontalScrollView>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="250dp"
         android:orientation="vertical">
         <TextView
             android:layout_width="match_parent"
@@ -117,3 +122,4 @@
             android:text="@string/save_trail_rsc"/>
     </LinearLayout>
 </LinearLayout>
+</ScrollView>

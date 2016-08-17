@@ -4,7 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -20,16 +24,26 @@ import android.widget.Toast;
 import com.example.hikernotes.MapsActivity;
 import com.example.hikernotes.R;
 import com.example.hikernotes.services.LocationUpdateService;
+import com.gun0912.tedpicker.Config;
+import com.gun0912.tedpicker.ImagePickerActivity;
+
+import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Created by John on 8/16/2016.
  */
 public class AddActivity extends AppCompatActivity {
+    private static final int INTENT_REQUEST_GET_IMAGES = 13;
+    private final int IMAGES_MAX_QNTY = 5;
     private Intent mIntentOfLocationUpdateService;
     private View.OnClickListener mClickListener;
+    private View.OnLongClickListener mLongClickListener;
     private EditText author_edt, title_edt, info_edt;
     private ImageView map_img, tour_img_one, tour_img_two, tour_img_tree, tour_img_four, tour_img_five;
     private Button save_btn, upload_btn;
+    private ArrayList<Uri> mImage_uris = new ArrayList<>();
+    private ArrayList<ImageView> tour_images = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,6 +56,41 @@ public class AddActivity extends AppCompatActivity {
         mIntentOfLocationUpdateService = new Intent(this, LocationUpdateService.class);
     }
 
+    private void setImageViewsSrc() {
+        int uri_qnt = mImage_uris.size();
+        if (uri_qnt == 0)
+            return;
+        Bitmap bitmap = null;
+        for (int i = 0; i < uri_qnt; i++) {
+            bitmap = BitmapFactory.decodeFile(mImage_uris.get(i).toString());
+            tour_images.get(i).setImageBitmap(bitmap);
+        }
+
+        int remaining_view_count = IMAGES_MAX_QNTY - uri_qnt;
+        if (remaining_view_count == 0)
+            return;
+
+        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.default_img);
+        for (int j = 4; j > (IMAGES_MAX_QNTY - remaining_view_count - 1); j--) {
+            tour_images.get(j).setImageBitmap(bitmap);
+        }
+    }
+
+    private void getImages() {
+        int selectionLimit = IMAGES_MAX_QNTY - mImage_uris.size();
+        if (selectionLimit == 0) {
+            Toast.makeText(this, "Only 5 images allowed!! Delete some first by long clicking on them!!", Toast.LENGTH_LONG).show();
+            return;
+        }
+        Config config = new Config();
+        config.setSelectionLimit(selectionLimit);
+
+        ImagePickerActivity.setConfig(config);
+
+        Intent intent = new Intent(this, ImagePickerActivity.class);
+        startActivityForResult(intent, INTENT_REQUEST_GET_IMAGES);
+    }
+
     private void initViews() {
         author_edt = (EditText) findViewById(R.id.author_txt_id);
         title_edt = (EditText) findViewById(R.id.title_txt_id);
@@ -50,10 +99,25 @@ public class AddActivity extends AppCompatActivity {
         map_img = (ImageView) findViewById(R.id.map_img_id);
         map_img.setOnClickListener(mClickListener);
         tour_img_one = (ImageView) findViewById(R.id.img_1_id);
+        tour_img_one.setOnClickListener(mClickListener);
+        tour_img_one.setOnLongClickListener(mLongClickListener);
+        tour_images.add(tour_img_one);
         tour_img_two = (ImageView) findViewById(R.id.img_2_id);
+        tour_img_two.setOnClickListener(mClickListener);
+        tour_img_two.setOnLongClickListener(mLongClickListener);
+        tour_images.add(tour_img_two);
         tour_img_tree = (ImageView) findViewById(R.id.img_3_id);
+        tour_img_tree.setOnClickListener(mClickListener);
+        tour_img_tree.setOnLongClickListener(mLongClickListener);
+        tour_images.add(tour_img_tree);
         tour_img_four = (ImageView) findViewById(R.id.img_4_id);
+        tour_img_four.setOnClickListener(mClickListener);
+        tour_img_four.setOnLongClickListener(mLongClickListener);
+        tour_images.add(tour_img_four);
         tour_img_five = (ImageView) findViewById(R.id.img_5_id);
+        tour_img_five.setOnClickListener(mClickListener);
+        tour_img_five.setOnLongClickListener(mLongClickListener);
+        tour_images.add(tour_img_five);
 
         save_btn = (Button) findViewById(R.id.save_tour_btn_id);
         save_btn.setOnClickListener(mClickListener);
@@ -81,9 +145,56 @@ public class AddActivity extends AppCompatActivity {
                         intent.putExtra("trail", current_trail);
                         startActivity(intent);
                         break;
+                    case R.id.img_1_id:
+                    case R.id.img_2_id:
+                    case R.id.img_3_id:
+                    case R.id.img_4_id:
+                    case R.id.img_5_id:
+                        getImages();
+                        break;
 
                     default:
                         break;
+                }
+            }
+        };
+
+        mLongClickListener = new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                switch (v.getId()) {
+                    case R.id.img_1_id:
+                        if (mImage_uris.size() == 0)
+                            return true;
+                        mImage_uris.remove(0);
+                        setImageViewsSrc();
+                        return true;
+                    case R.id.img_2_id:
+                        if (mImage_uris.size() < 2)
+                            return true;
+                        mImage_uris.remove(1);
+                        setImageViewsSrc();
+                        return true;
+                    case R.id.img_3_id:
+                        if (mImage_uris.size() < 3)
+                            return true;
+                        mImage_uris.remove(2);
+                        setImageViewsSrc();
+                        return true;
+                    case R.id.img_4_id:
+                        if (mImage_uris.size() < 4)
+                            return true;
+                        mImage_uris.remove(3);
+                        setImageViewsSrc();
+                        return true;
+                    case R.id.img_5_id:
+                        if (mImage_uris.size() < 5)
+                            return true;
+                        mImage_uris.remove(4);
+                        setImageViewsSrc();
+                        return true;
+                    default:
+                        return false;
                 }
             }
         };
@@ -119,6 +230,16 @@ public class AddActivity extends AppCompatActivity {
             switch (requestCode) {
                 case LocationUpdateService.REQUEST_CODE_FOR_RESOLUTION_REQUEST:
                     Toast.makeText(this, "If you enabled settings, try to start tracking again!!", Toast.LENGTH_LONG).show();
+                    break;
+                case INTENT_REQUEST_GET_IMAGES:
+                    if (mImage_uris.size() == 0) {
+                        mImage_uris = data.getParcelableArrayListExtra(ImagePickerActivity.EXTRA_IMAGE_URIS);
+                        setImageViewsSrc();
+                    } else {
+                        ArrayList<Uri> temp = data.getParcelableArrayListExtra(ImagePickerActivity.EXTRA_IMAGE_URIS);
+                        mImage_uris.addAll(temp);
+                        setImageViewsSrc();
+                    }
                     break;
                 default:
                     break;
