@@ -1,0 +1,23 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context="com.example.hikernotes.MainActivity">
+    <item android:id="@+id/sort_by_id" android:title="@string/sort_by_rsc">
+        <menu>
+            <group android:id="@+id/sort_settings" android:checkableBehavior="single">
+                <item android:id="@+id/date_check_id"
+                      android:title="..date" />
+                <item android:id="@+id/likes_check_id"
+                      android:title="..likes" />
+            </group>
+        </menu>
+    </item>
+    <!--item android:id="@+id/saved_trails_id" android:title="@string/saved_trails_rsc" android:visible="true">
+        <menu>
+            <group android:id="@+id/trails_id" android:checkableBehavior="none">
+                <item android:id="@+id/item_tmp"
+                      android:title="Temp saved" />
+            </group>
+        </menu>
+    </item-->
+</menu>
