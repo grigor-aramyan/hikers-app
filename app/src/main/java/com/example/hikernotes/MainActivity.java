@@ -24,6 +24,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.hikernotes.activities.AddActivity;
 import com.example.hikernotes.adapters.MyPagerAdapter;
+import com.example.hikernotes.realms.CurrentTour;
 import com.example.hikernotes.realms.SavedTrail;
 import com.example.hikernotes.realms.Tour;
 
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     public static String sUrlForTourDetails = "http://hikingapp.net23.net/getremainingdata.php";
     private ViewPager mViewPager;
     private RequestQueue mQueue;
-    private Realm mRealm, mRealmForSavedTrail;
+    private Realm mRealm;
     private MyPagerAdapter adapter;
 
     @Override
@@ -63,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
 
         mQueue = Volley.newRequestQueue(this);
         mRealm = Realm.getDefaultInstance();
-        mRealmForSavedTrail = Realm.getDefaultInstance();
 
         int flag = getIntent().getIntExtra("flag_continue", 1);
 
@@ -81,12 +81,19 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        RealmResults<SavedTrail> savedTrails = mRealmForSavedTrail.where(SavedTrail.class).findAll();
+        RealmResults<SavedTrail> savedTrails = mRealm.where(SavedTrail.class).findAll();
         if (savedTrails.size() > 0) {
             SubMenu subMenu = menu.addSubMenu(Menu.NONE, Menu.NONE, 2, "Saved Trails");
             for (SavedTrail savedTrail: savedTrails) {
                 subMenu.add(0, savedTrail.getId(), Menu.NONE, savedTrail.getTour_name());
             }
+        }
+
+        RealmResults<CurrentTour> currentTours = mRealm.where(CurrentTour.class).findAll();
+        if (currentTours.size() > 0) {
+            SubMenu subMenu = menu.addSubMenu(Menu.NONE, Menu.NONE, 3, "Current tour");
+            CurrentTour currentTour = currentTours.get(0);
+            subMenu.add(1, currentTour.getId(), Menu.NONE, "Current Stars");
         }
 
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -121,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
             default:
                 break;
         }
-        RealmResults<SavedTrail> savedTrails = mRealmForSavedTrail.where(SavedTrail.class).findAll();
+        RealmResults<SavedTrail> savedTrails = mRealm.where(SavedTrail.class).findAll();
         if (savedTrails.size() > 0) {
             int item_id = item.getItemId();
             for (SavedTrail savedTrail: savedTrails) {

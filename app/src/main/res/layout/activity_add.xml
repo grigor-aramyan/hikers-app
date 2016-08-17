@@ -9,24 +9,30 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="vertical">
-        <EditText
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:id="@+id/author_txt_id"
-            android:hint="Author: "/>
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:id="@+id/title_txt_id"
-            android:hint="Title: "/>
+            android:orientation="horizontal">
+            <EditText
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:id="@+id/author_txt_id"
+                android:hint="Author: "/>
+            <EditText
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:id="@+id/title_txt_id"
+                android:hint="Title: "/>
+        </LinearLayout>
         <ImageView
             android:layout_width="75dp"
             android:layout_height="0dp"
             android:layout_weight="2"
             android:id="@+id/map_img_id"
-            android:src="@mipmap/ic_launcher"/>
+            android:src="@drawable/map_icon"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -36,31 +42,31 @@
             <ImageView
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="150dp"
+                android:layout_height="match_parent"
                 android:id="@+id/img_1_id"
                 android:src="@mipmap/ic_launcher"/>
             <ImageView
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="150dp"
+                android:layout_height="match_parent"
                 android:id="@+id/img_2_id"
                 android:src="@mipmap/ic_launcher"/>
             <ImageView
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="150dp"
+                android:layout_height="match_parent"
                 android:id="@+id/img_3_id"
                 android:src="@mipmap/ic_launcher"/>
             <ImageView
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="150dp"
+                android:layout_height="match_parent"
                 android:id="@+id/img_4_id"
                 android:src="@mipmap/ic_launcher"/>
             <ImageView
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="150dp"
+                android:layout_height="match_parent"
                 android:id="@+id/img_5_id"
                 android:src="@mipmap/ic_launcher"/>
         </LinearLayout>
@@ -70,32 +76,14 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="vertical">
-        <TextView
+        <EditText
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="4"
             android:background="@color/colorAccent"
             android:id="@+id/tour_info_txt_id"
-            android:text="some memos from tour"/>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/likes_count_txt_id"
-                android:text="Likes: 83"/>
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:id="@+id/upvote_btn_id"/>
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:id="@+id/downvote_btn_id"/>
-        </LinearLayout>
+            android:hint="some memos from tour"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"

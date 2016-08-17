@@ -40,7 +40,7 @@ public class LocationUpdateService extends Service {
     public static final int REQUEST_CODE_FOR_RESOLUTION_REQUEST = 1;
     private long mLocationUpdateInterval = 10000L;
     private long mLocationUpdateIntervalFastest = 5000L;
-    private String mSharedPrefName = "locationsBase";
+    public static String sSharedPrefForFixedLocations = "locationsBase";
 
     @Override
     public void onCreate() {
@@ -168,9 +168,9 @@ public class LocationUpdateService extends Service {
 
         double latitude = location.getLatitude();
         double longitude = location.getLongitude();
-        String point = latitude + "::" + longitude + "nnn";
+        String point = latitude + "-" + longitude + "::";
 
-        SharedPreferences sharedPreferences = getApplication().getSharedPreferences(mSharedPrefName, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getApplication().getSharedPreferences(sSharedPrefForFixedLocations, Context.MODE_PRIVATE);
         String pastLocations = sharedPreferences.getString("locations", "");
         pastLocations = pastLocations + point;
         SharedPreferences.Editor editor = sharedPreferences.edit();

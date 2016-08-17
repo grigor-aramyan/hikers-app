@@ -44,7 +44,7 @@ public class DetailsActivity extends AppCompatActivity {
     private ImageView map_image, image_one, image_two, image_tree, image_four, image_five;
     private Button save_trail_btn;
     private ImageView upvote_img_btn, downvote_img_btn;
-    private Realm mRealm, mRealmForSavedTours;
+    private Realm mRealm;
     private RequestQueue mRequestQueue;
     private View.OnClickListener mClickListener;
     private int mSelectedTourID;
@@ -56,7 +56,6 @@ public class DetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_details);
 
         mRealm = Realm.getDefaultInstance();
-        mRealmForSavedTours = Realm.getDefaultInstance();
         mRequestQueue = Volley.newRequestQueue(this);
 
         initInterfaces();
@@ -151,11 +150,11 @@ public class DetailsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 switch (v.getId()){
                     case R.id.save_trail_btn_id:
-                        mRealmForSavedTours.beginTransaction();
+                        mRealm.beginTransaction();
                         SavedTrail savedTrail = new SavedTrail(mSelectedTourID, mTitle, mTrail);
 
-                        mRealmForSavedTours.copyToRealmOrUpdate(savedTrail);
-                        mRealmForSavedTours.commitTransaction();
+                        mRealm.copyToRealmOrUpdate(savedTrail);
+                        mRealm.commitTransaction();
                         Toast.makeText(getApplication(), "Trail saved", Toast.LENGTH_LONG).show();
                         break;
                     case R.id.upvote_btn_id:
