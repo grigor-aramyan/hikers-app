@@ -1,6 +1,7 @@
 package com.example.hikernotes.activities;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -155,13 +156,30 @@ public class DetailsActivity extends AppCompatActivity {
 
                         mRealmForSavedTours.copyToRealmOrUpdate(savedTrail);
                         mRealmForSavedTours.commitTransaction();
+                        Toast.makeText(getApplication(), "Trail saved", Toast.LENGTH_LONG).show();
                         break;
                     case R.id.upvote_btn_id:
                         StringRequest stringRequest = new StringRequest(Request.Method.POST, MainActivity.sUrlForVoting, new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
-                                if (response.startsWith("done"))
+                                if (response.startsWith("done")) {
+                                    RealmResults<Tour> realmResults = mRealm.where(Tour.class).equalTo("id", mSelectedTourID).findAll();
+                                    if (realmResults.size() > 0) {
+                                        Tour tour = realmResults.get(0);
+                                        int tour_likes = tour.getLikes();
+                                        mRealm.beginTransaction();
+                                        tour.setLikes(tour_likes + 1);
+                                        mRealm.copyToRealmOrUpdate(tour);
+                                        mRealm.commitTransaction();
+
+                                        likes_txt.setText("Likes: " + (tour_likes + 1));
+                                        likes_txt.setTextColor(getResources().getColor(R.color.colorMaterialGreen));
+
+                                        upvote_img_btn.setClickable(false);
+                                    }
+
                                     Toast.makeText(getApplication(), "Upvoted", Toast.LENGTH_LONG).show();
+                                }
                             }
                         }, new Response.ErrorListener() {
                             @Override
@@ -185,14 +203,30 @@ public class DetailsActivity extends AppCompatActivity {
                             }
                         };
                         mRequestQueue.add(stringRequest);
-                        upvote_img_btn.setClickable(false);
                         break;
                     case R.id.downvote_btn_id:
                         StringRequest stringRequest1 = new StringRequest(Request.Method.POST, MainActivity.sUrlForVoting, new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
-                                if (response.startsWith("done"))
+                                if (response.startsWith("done")){
+                                    RealmResults<Tour> realmResults = mRealm.where(Tour.class).equalTo("id", mSelectedTourID).findAll();
+                                    if (realmResults.size() > 0) {
+                                        Tour tour = realmResults.get(0);
+                                        int tour_likes = tour.getLikes();
+                                        mRealm.beginTransaction();
+                                        tour.setLikes(tour_likes - 1);
+                                        mRealm.copyToRealmOrUpdate(tour);
+                                        mRealm.commitTransaction();
+
+                                        likes_txt.setText("Likes: " + (tour_likes - 1));
+                                        likes_txt.setTextColor(getResources().getColor(R.color.colorMaterialRed));
+
+                                        downvote_img_btn.setClickable(false);
+                                    }
+
                                     Toast.makeText(getApplication(), "Downvoted", Toast.LENGTH_LONG).show();
+                                }
+
                             }
                         }, new Response.ErrorListener() {
                             @Override
@@ -216,7 +250,6 @@ public class DetailsActivity extends AppCompatActivity {
                             }
                         };
                         mRequestQueue.add(stringRequest1);
-                        downvote_img_btn.setClickable(false);
                         break;
                     case R.id.map_img_id:
                         Intent intent = new Intent(getApplication(), MapsActivity.class);
