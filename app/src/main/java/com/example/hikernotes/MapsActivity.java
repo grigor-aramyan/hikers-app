@@ -74,7 +74,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         .position(firstltlng)
         .title("Start Point"));
         mMap.addPolyline(trail);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
         if (mCurrentLocationEnabled) {
             try {
                 mMap.setMyLocationEnabled(true);

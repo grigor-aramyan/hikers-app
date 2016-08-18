@@ -12,4 +12,8 @@
     <string name="start_tracking_rsc">Start tracking</string>
     <string name="stop_tracking_rsc">Stop tracking</string>
     <string name="clear_current_rsc">Clear current</string>
+    <string name="comments_bold"><b>COMMENTS</b></string>
+    <string name="react_with_comment_rsc">React</string>
+    <string name="show_comments_rsc">Show comments</string>
+    <string name="say_somethi_n_rsc">Say somethi\'n</string>
 </resources>

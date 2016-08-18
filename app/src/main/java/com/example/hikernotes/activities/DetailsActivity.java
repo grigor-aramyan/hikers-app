@@ -1,12 +1,17 @@
 package com.example.hikernotes.activities;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,6 +31,8 @@ import com.example.hikernotes.R;
 import com.example.hikernotes.realms.Tour;
 import com.example.hikernotes.cache.LruBitmapCache;
 import com.example.hikernotes.realms.SavedTrail;
+import com.example.hikernotes.widgets.AddCommentBlock;
+import com.example.hikernotes.widgets.ShowCommentsBlock;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,32 +49,38 @@ import io.realm.RealmResults;
 public class DetailsActivity extends AppCompatActivity {
     private TextView title_txt, date_txt, author_txt, info_txt, likes_txt;
     private ImageView map_image, image_one, image_two, image_tree, image_four, image_five;
-    private Button save_trail_btn;
+    private Button save_trail_btn, show_comments_btn, add_comment_btn;
     private ImageView upvote_img_btn, downvote_img_btn;
     private Realm mRealm;
     private RequestQueue mRequestQueue;
     private View.OnClickListener mClickListener;
-    private int mSelectedTourID;
+    public static int mSelectedTourID;
     private String mTrail, mTitle;
+    private AddCommentBlock mAddCommentBlock;
+    private ShowCommentsBlock mShowCommentsBlock;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
-        mRealm = Realm.getDefaultInstance();
-        mRequestQueue = Volley.newRequestQueue(this);
-
-        initInterfaces();
-        initViews();
-
-
         mSelectedTourID = getIntent().getIntExtra("selected-tour-id", 0);
+
 
         if (mSelectedTourID == 0) {
             Toast.makeText(this, "Sorry! Something went wrong!", Toast.LENGTH_LONG).show();
             return;
         }
+
+        mRealm = Realm.getDefaultInstance();
+        mRequestQueue = Volley.newRequestQueue(this);
+
+        AddCommentBlock.mSelectedTourId = mSelectedTourID;
+        ShowCommentsBlock.mSelectedTourID = mSelectedTourID;
+
+        initInterfaces();
+        initViews();
+
 
         RealmResults<Tour> realmResults = mRealm.where(Tour.class).equalTo("id", mSelectedTourID).findAll();
         if (realmResults.size() > 0) {
@@ -136,11 +149,18 @@ public class DetailsActivity extends AppCompatActivity {
 
         save_trail_btn = (Button) findViewById(R.id.save_trail_btn_id);
         save_trail_btn.setOnClickListener(mClickListener);
+        show_comments_btn = (Button) findViewById(R.id.show_comments_btn_id);
+        show_comments_btn.setOnClickListener(mClickListener);
+        add_comment_btn = (Button) findViewById(R.id.add_comment_btn_id);
+        add_comment_btn.setOnClickListener(mClickListener);
 
         upvote_img_btn = (ImageView) findViewById(R.id.upvote_btn_id);
         upvote_img_btn.setOnClickListener(mClickListener);
         downvote_img_btn = (ImageView) findViewById(R.id.downvote_btn_id);
         downvote_img_btn.setOnClickListener(mClickListener);
+
+        mAddCommentBlock = (AddCommentBlock) findViewById(R.id.add_comment_block_id);
+        mShowCommentsBlock = (ShowCommentsBlock) findViewById(R.id.show_comments_block_id);
 
     }
 
@@ -149,6 +169,12 @@ public class DetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 switch (v.getId()){
+                    case R.id.add_comment_btn_id:
+                        mAddCommentBlock.setVisibility((mAddCommentBlock.getVisibility() == View.GONE)?View.VISIBLE:View.GONE);
+                        break;
+                    case R.id.show_comments_btn_id:
+                        mShowCommentsBlock.setVisibility((mShowCommentsBlock.getVisibility() == View.GONE)?View.VISIBLE:View.GONE);
+                        break;
                     case R.id.save_trail_btn_id:
                         mRealm.beginTransaction();
                         SavedTrail savedTrail = new SavedTrail(mSelectedTourID, mTitle, mTrail);
@@ -259,5 +285,31 @@ public class DetailsActivity extends AppCompatActivity {
                 }
             }
         };
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        View v = getCurrentFocus();
+
+        if (v != null &&
+                (ev.getAction() == MotionEvent.ACTION_UP || ev.getAction() == MotionEvent.ACTION_MOVE) &&
+                v instanceof EditText &&
+                !v.getClass().getName().startsWith("android.webkit.")) {
+            int scrcoords[] = new int[2];
+            v.getLocationOnScreen(scrcoords);
+            float x = ev.getRawX() + v.getLeft() - scrcoords[0];
+            float y = ev.getRawY() + v.getTop() - scrcoords[1];
+
+            if (x < v.getLeft() || x > v.getRight() || y < v.getTop() || y > v.getBottom())
+                hideKeyboard(this);
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    public static void hideKeyboard(Activity activity) {
+        if (activity != null && activity.getWindow() != null && activity.getWindow().getDecorView() != null) {
+            InputMethodManager imm = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(activity.getWindow().getDecorView().getWindowToken(), 0);
+        }
     }
 }

@@ -5,7 +5,7 @@
 <LinearLayout
                   android:orientation="vertical"
                   android:layout_width="match_parent"
-                  android:layout_height="550dp">
+                  android:layout_height="600dp">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="300dp"
@@ -120,6 +120,39 @@
             android:layout_weight="2"
             android:id="@+id/save_trail_btn_id"
             android:text="@string/save_trail_rsc"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:text="@string/show_comments_rsc"
+            android:id="@+id/show_comments_btn_id"/>
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:text="@string/say_somethi_n_rsc"
+            android:id="@+id/add_comment_btn_id"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <com.example.hikernotes.widgets.AddCommentBlock
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:id="@+id/add_comment_block_id"
+            android:visibility="gone"/>
+        <com.example.hikernotes.widgets.ShowCommentsBlock
+            android:layout_width="match_parent"
+            android:layout_height="130dp"
+            android:id="@+id/show_comments_block_id"
+            android:visibility="gone"/>
+
     </LinearLayout>
 </LinearLayout>
 </ScrollView>

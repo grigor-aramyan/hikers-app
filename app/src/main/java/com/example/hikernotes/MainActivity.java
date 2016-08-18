@@ -43,6 +43,9 @@ public class MainActivity extends AppCompatActivity {
     public static String sUrlForTourDetails = "http://hikingapp.net23.net/getremainingdata.php";
     public static String sUrlForNewTourAdd = "http://hikingapp.net23.net/addnewtour.php";
     public static String sUrlForImageUploads = "http://hikingapp.net23.net/storetourimages.php";
+    public static String sUrlForNewComment = "http://hikingapp.net23.net/addnewcomment.php";
+    public static String sUrlForPullingComments = "http://hikingapp.net23.net/pullcomments.php";
+
     private ViewPager mViewPager;
     private RequestQueue mQueue;
     private Realm mRealm;

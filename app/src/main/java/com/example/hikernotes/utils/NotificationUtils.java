@@ -12,6 +12,7 @@ import android.widget.RemoteViews;
 
 import com.example.hikernotes.MainActivity;
 import com.example.hikernotes.R;
+import com.example.hikernotes.activities.AddActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -47,7 +48,7 @@ public class NotificationUtils {
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         stackBuilder.addParentStack(MainActivity.class);
-        stackBuilder.addNextIntent(new Intent(context, MainActivity.class));
+        stackBuilder.addNextIntent(new Intent(context, AddActivity.class));
 
         builder.setContentIntent(stackBuilder.getPendingIntent(notificationID, 0));
 

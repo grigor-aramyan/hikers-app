@@ -6,4 +6,6 @@
     <color name="colorTrail">#FFEB3B</color>
     <color name="colorMaterialRed">#F44336</color>
     <color name="colorMaterialGreen">#76FF03</color>
+    <color name="colorMaterialLightYellow">#FFFF00</color>
+    <color name="colorMaterialOrange">#FFB300</color>
 </resources>

@@ -360,7 +360,7 @@ public class AddActivity extends AppCompatActivity {
                             Toast.makeText(getApplication(), "No current trail to show!!", Toast.LENGTH_LONG).show();
                             return;
                         }
-                        Intent intent = new Intent(getApplication(), MapsActivity.class);
+                        Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
                         intent.putExtra("trail", current_trail);
                         startActivity(intent);
                         break;

@@ -86,11 +86,12 @@ public class MainRecyclerListAdapter extends RecyclerView.Adapter<MainRecyclerLi
         holder.mTitle.setText(tour.getTitle());
         holder.mDate.setText(tour.getDate());
         holder.mLikes.setText(tour.getLikes() + "");
+        final int tour_id = tour.getId();
         holder.mImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, DetailsActivity.class);
-                intent.putExtra("selected-tour-id", tour.getId());
+                intent.putExtra("selected-tour-id", tour_id);
                 mContext.startActivity(intent);
             }
         });
