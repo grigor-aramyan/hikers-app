@@ -125,6 +125,10 @@ public class MainActivity extends AppCompatActivity {
                 intent1.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent1);
                 return true;
+            case 10001:
+                Intent intent2 = new Intent(this, AddActivity.class);
+                startActivity(intent2);
+                return true;
             default:
                 break;
         }

@@ -2,6 +2,7 @@ package com.example.hikernotes.activities;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -10,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,12 +25,18 @@ import android.widget.Toast;
 
 import com.example.hikernotes.MapsActivity;
 import com.example.hikernotes.R;
+import com.example.hikernotes.realms.CurrentTour;
 import com.example.hikernotes.services.LocationUpdateService;
 import com.gun0912.tedpicker.Config;
 import com.gun0912.tedpicker.ImagePickerActivity;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 /**
  * Created by John on 8/16/2016.
@@ -41,17 +49,39 @@ public class AddActivity extends AppCompatActivity {
     private View.OnLongClickListener mLongClickListener;
     private EditText author_edt, title_edt, info_edt;
     private ImageView map_img, tour_img_one, tour_img_two, tour_img_tree, tour_img_four, tour_img_five;
-    private Button save_btn, upload_btn;
+    private Button save_btn, upload_btn, clear_btn;
     private ArrayList<Uri> mImage_uris = new ArrayList<>();
     private ArrayList<ImageView> tour_images = new ArrayList<>();
+    private Realm mRealm;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
 
+        mRealm = Realm.getDefaultInstance();
+
         initInterfaces();
         initViews();
+
+        RealmResults<CurrentTour> realmResults = mRealm.where(CurrentTour.class).findAll();
+        if (realmResults.size() != 0) {
+            CurrentTour currentTour = realmResults.get(0);
+            if (null != currentTour.getTitle())
+                title_edt.setText(currentTour.getTitle());
+            if (null != currentTour.getAuthor())
+                author_edt.setText(currentTour.getAuthor());
+            if (null != currentTour.getInfo())
+                info_edt.setText(currentTour.getInfo());
+            if (null != currentTour.getTour_imgs_refs() && !currentTour.getTour_imgs_refs().isEmpty()) {
+                String[] img_uris = currentTour.getTour_imgs_refs().split("----");
+                for (int i = 0; i < img_uris.length; i++) {
+                    mImage_uris.add(Uri.parse(img_uris[i]));
+                }
+                setImageViewsSrc();
+            }
+
+        }
 
         mIntentOfLocationUpdateService = new Intent(this, LocationUpdateService.class);
     }
@@ -123,6 +153,8 @@ public class AddActivity extends AppCompatActivity {
         save_btn.setOnClickListener(mClickListener);
         upload_btn = (Button) findViewById(R.id.upload_tour_btn_id);
         upload_btn.setOnClickListener(mClickListener);
+        clear_btn = (Button) findViewById(R.id.clear_current_btn_id);
+        clear_btn.setOnClickListener(mClickListener);
     }
 
     private void initInterfaces() {
@@ -131,6 +163,78 @@ public class AddActivity extends AppCompatActivity {
             public void onClick(View v) {
                 switch (v.getId()) {
                     case R.id.save_tour_btn_id:
+                        String title = title_edt.getText().toString();
+                        String author = author_edt.getText().toString();
+                        String info = info_edt.getText().toString();
+
+                        String image_uris_encoded = "";
+                        if (mImage_uris.size() != 0) {
+                            for (Uri uri: mImage_uris) {
+                                image_uris_encoded += uri.toString() + "----";
+                            }
+                        }
+                        RealmResults<CurrentTour> realmResults = mRealm.where(CurrentTour.class).findAll();
+                        if (realmResults.size() == 0) {
+                            SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
+                            mRealm.beginTransaction();
+                            CurrentTour currentTour = new CurrentTour(title, author, formatter.format(new Date()), info, image_uris_encoded);
+                            mRealm.copyToRealmOrUpdate(currentTour);
+                            mRealm.commitTransaction();
+                            Toast.makeText(getApplication(), "Current tour saved!", Toast.LENGTH_LONG).show();
+                        } else {
+                            CurrentTour currentTour = realmResults.get(0);
+                            mRealm.beginTransaction();
+                            currentTour.setTitle(title);
+                            currentTour.setAuthor(author);
+                            currentTour.setInfo(info);
+                            currentTour.setTour_imgs_refs(image_uris_encoded);
+                            mRealm.copyToRealmOrUpdate(currentTour);
+                            mRealm.commitTransaction();
+                            Toast.makeText(getApplication(), "Current tour updated!", Toast.LENGTH_LONG).show();
+                        }
+                        break;
+                    case R.id.clear_current_btn_id:
+                        final RealmResults<CurrentTour> realmResults1 = mRealm.where(CurrentTour.class).findAll();
+                        if (realmResults1.size() == 0) {
+                            Toast.makeText(getApplication(), "No current tour! Nothing to clear!!", Toast.LENGTH_LONG).show();
+                            return;
+                        } else {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(AddActivity.this);
+                            AlertDialog alertDialog = builder
+                                    .setTitle("Clearing current")
+                                    .setMessage("You are about clearing inputed data and previously fixed locations??")
+                                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            SharedPreferences sharedPreferences = getSharedPreferences(LocationUpdateService.sSharedPrefForFixedLocations, MODE_PRIVATE);
+                                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                                            editor.remove("locations");
+                                            editor.commit();
+
+                                            mRealm.executeTransaction(new Realm.Transaction() {
+                                                @Override
+                                                public void execute(Realm realm) {
+                                                    realmResults1.clear();
+                                                }
+                                            });
+
+                                            Toast.makeText(getApplication(), "Cleared!", Toast.LENGTH_LONG).show();
+                                            Intent intent = new Intent(getApplication(), AddActivity.class);
+                                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                            startActivity(intent);
+                                        }
+                                    })
+                                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    }).create();
+                            alertDialog.show();
+                        }
+                        break;
+
+                    case R.id.upload_tour_btn_id:
 
                         break;
 
@@ -213,6 +317,18 @@ public class AddActivity extends AppCompatActivity {
                 stopService(mIntentOfLocationUpdateService);
                 LocationUpdateService.sActivity = AddActivity.this;
                 startService(mIntentOfLocationUpdateService);
+
+                RealmResults<CurrentTour> realmResults = mRealm.where(CurrentTour.class).findAll();
+                if (realmResults.size() == 0) {
+                    SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
+                    mRealm.beginTransaction();
+                    CurrentTour currentTour = new CurrentTour();
+                    currentTour.setDate(formatter.format(new Date()));
+                    mRealm.copyToRealmOrUpdate(currentTour);
+                    mRealm.commitTransaction();
+                    Toast.makeText(getApplication(), "Current tour saved!", Toast.LENGTH_LONG).show();
+                }
+
                 return true;
 
             case R.id.stop_tracking_id:

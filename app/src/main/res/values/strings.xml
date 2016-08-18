@@ -11,4 +11,5 @@
     <string name="saved_trails_rsc">Saved trails</string>
     <string name="start_tracking_rsc">Start tracking</string>
     <string name="stop_tracking_rsc">Stop tracking</string>
+    <string name="clear_current_rsc">Clear current</string>
 </resources>

@@ -101,6 +101,12 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="match_parent"
+                android:id="@+id/clear_current_btn_id"
+                android:text="@string/clear_current_rsc"/>
+            <Button
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
                 android:id="@+id/upload_tour_btn_id"
                 android:text="@string/upload_rsc"/>
         </LinearLayout>
