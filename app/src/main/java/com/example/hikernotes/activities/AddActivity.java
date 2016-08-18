@@ -23,6 +23,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.hikernotes.MainActivity;
 import com.example.hikernotes.MapsActivity;
 import com.example.hikernotes.R;
 import com.example.hikernotes.realms.CurrentTour;
@@ -30,7 +38,17 @@ import com.example.hikernotes.services.LocationUpdateService;
 import com.gun0912.tedpicker.Config;
 import com.gun0912.tedpicker.ImagePickerActivity;
 
+import net.gotev.uploadservice.MultipartUploadRequest;
+import net.gotev.uploadservice.ServerResponse;
+import net.gotev.uploadservice.UploadInfo;
+import net.gotev.uploadservice.UploadStatusDelegate;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -47,12 +65,14 @@ public class AddActivity extends AppCompatActivity {
     private Intent mIntentOfLocationUpdateService;
     private View.OnClickListener mClickListener;
     private View.OnLongClickListener mLongClickListener;
+    private UploadStatusDelegate mUploadStatusDelegate;
     private EditText author_edt, title_edt, info_edt;
     private ImageView map_img, tour_img_one, tour_img_two, tour_img_tree, tour_img_four, tour_img_five;
     private Button save_btn, upload_btn, clear_btn;
     private ArrayList<Uri> mImage_uris = new ArrayList<>();
     private ArrayList<ImageView> tour_images = new ArrayList<>();
     private Realm mRealm;
+    private RequestQueue mRequestQueue;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -60,6 +80,7 @@ public class AddActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add);
 
         mRealm = Realm.getDefaultInstance();
+        mRequestQueue = Volley.newRequestQueue(this);
 
         initInterfaces();
         initViews();
@@ -76,7 +97,8 @@ public class AddActivity extends AppCompatActivity {
             if (null != currentTour.getTour_imgs_refs() && !currentTour.getTour_imgs_refs().isEmpty()) {
                 String[] img_uris = currentTour.getTour_imgs_refs().split("----");
                 for (int i = 0; i < img_uris.length; i++) {
-                    mImage_uris.add(Uri.parse(img_uris[i]));
+                    if (!img_uris[i].isEmpty())
+                        mImage_uris.add(Uri.parse(img_uris[i]));
                 }
                 setImageViewsSrc();
             }
@@ -206,10 +228,7 @@ public class AddActivity extends AppCompatActivity {
                                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            SharedPreferences sharedPreferences = getSharedPreferences(LocationUpdateService.sSharedPrefForFixedLocations, MODE_PRIVATE);
-                                            SharedPreferences.Editor editor = sharedPreferences.edit();
-                                            editor.remove("locations");
-                                            editor.commit();
+                                            clearLocationsSharedPref();
 
                                             mRealm.executeTransaction(new Realm.Transaction() {
                                                 @Override
@@ -235,7 +254,103 @@ public class AddActivity extends AppCompatActivity {
                         break;
 
                     case R.id.upload_tour_btn_id:
+                        StringRequest stringRequest = new StringRequest(Request.Method.POST, MainActivity.sUrlForConnectivityCheck, new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                if (response.startsWith("got it")) {
+                                    final RealmResults<CurrentTour> realmResults2 = mRealm.where(CurrentTour.class).findAll();
+                                    if (realmResults2.size() == 0) {
+                                        Toast.makeText(getApplication(), "Nothing to upload!!", Toast.LENGTH_LONG).show();
+                                        return;
+                                    }
+                                    String author, title, info, date, trail;
+                                    author = author_edt.getText().toString();
+                                    title = title_edt.getText().toString();
+                                    info = info_edt.getText().toString();
+                                    if (author.isEmpty() || title.isEmpty() || info.isEmpty()) {
+                                        Toast.makeText(getApplication(), "No empty fields allowed! Input some data before upload!", Toast.LENGTH_LONG).show();
+                                        return;
+                                    }
+                                    CurrentTour currentTour = realmResults2.get(0);
+                                    date = currentTour.getDate();
+                                    SharedPreferences sharedPreferences = getSharedPreferences(LocationUpdateService.sSharedPrefForFixedLocations, MODE_PRIVATE);
+                                    trail = sharedPreferences.getString("locations", "");
+                                    if (trail.isEmpty()) {
+                                        Toast.makeText(getApplication(), "No fixed locations, those trail for this tour. Can't upload w/o it!!", Toast.LENGTH_LONG).show();
+                                        return;
+                                    }
+                                    if (mImage_uris.size() != 5) {
+                                        Toast.makeText(getApplication(), "We need exactly 5 images to make an upload. Add some, please!", Toast.LENGTH_LONG).show();
+                                        return;
+                                    }
+                                    JSONObject jsonObject = new JSONObject();
+                                    try {
+                                        jsonObject.put("author", author);
+                                        jsonObject.put("title", title);
+                                        jsonObject.put("info", info);
+                                        jsonObject.put("date", date);
+                                        jsonObject.put("trail", trail);
+                                    } catch (JSONException jExp) {}
+                                    JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, MainActivity.sUrlForNewTourAdd, jsonObject, new Response.Listener<JSONObject>() {
+                                        @Override
+                                        public void onResponse(JSONObject response) {
+                                            try {
+                                                if (response.getString("result").equals("ok")) {
+                                                    int new_tour_id = response.getInt("lastid");
 
+                                                    for (Uri uri: mImage_uris) {
+                                                        MultipartUploadRequest request = new MultipartUploadRequest(getApplication(), MainActivity.sUrlForImageUploads)
+                                                                .setAutoDeleteFilesAfterSuccessfulUpload(false)
+                                                                .setMaxRetries(3)
+                                                                .addParameter("tourid", new_tour_id + "")
+                                                                .addFileToUpload(uri.toString(), "myimage");
+                                                        request.setDelegate(mUploadStatusDelegate).startUpload();
+                                                    }
+
+                                                }
+                                            } catch (JSONException jsExp) {
+                                                Toast.makeText(getApplication(), "jsonexception while parsing jsonobject response", Toast.LENGTH_LONG).show();
+                                                return;
+                                            }
+                                            catch (FileNotFoundException fExp) {
+                                                Toast.makeText(getApplication(), "Can't find some images to upload! Try to pick other one!!", Toast.LENGTH_LONG).show();
+                                                return;
+                                            }
+                                            catch (MalformedURLException malExp) {
+                                                Toast.makeText(getApplication(), "Some problem with our serv! Try to upload later! Sorry!", Toast.LENGTH_LONG).show();
+                                                return;
+                                            }
+                                            clearLocationsSharedPref();
+
+                                            mRealm.executeTransaction(new Realm.Transaction() {
+                                                @Override
+                                                public void execute(Realm realm) {
+                                                    realmResults2.clear();
+                                                }
+                                            });
+                                        }
+                                    }, new Response.ErrorListener() {
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+                                            Toast.makeText(getApplication(), "some problem while making jsonobject req", Toast.LENGTH_LONG).show();
+                                            return;
+                                        }
+                                    });
+                                    mRequestQueue.add(jsonObjectRequest);
+
+                                } else {
+                                    Toast.makeText(getApplication(), "Sorry! We have problems with our server! Try later, please!!", Toast.LENGTH_LONG).show();
+                                    return;
+                                }
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Toast.makeText(getApplication(), "Sorry! Some problems with net connection!", Toast.LENGTH_LONG).show();
+
+                            }
+                        });
+                        mRequestQueue.add(stringRequest);
                         break;
 
                     case R.id.map_img_id:
@@ -302,6 +417,35 @@ public class AddActivity extends AppCompatActivity {
                 }
             }
         };
+
+        mUploadStatusDelegate = new UploadStatusDelegate() {
+            @Override
+            public void onProgress(UploadInfo uploadInfo) {
+
+            }
+
+            @Override
+            public void onError(UploadInfo uploadInfo, Exception exception) {
+                Toast.makeText(getApplication(), "Some error while trying to upload images!", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onCompleted(UploadInfo uploadInfo, ServerResponse serverResponse) {
+                Toast.makeText(getApplication(), "Images upload completed", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onCancelled(UploadInfo uploadInfo) {
+
+            }
+        };
+    }
+
+    private void clearLocationsSharedPref() {
+        SharedPreferences sharedPreferences = getSharedPreferences(LocationUpdateService.sSharedPrefForFixedLocations, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove("locations");
+        editor.commit();
     }
 
     @Override
