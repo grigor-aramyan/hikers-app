@@ -48,46 +48,58 @@ public class CommentsListAdapter extends RecyclerView.Adapter<CommentsListAdapte
         authors = new ArrayList<>();
         comments = new ArrayList<>();
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, MainActivity.sUrlForPullingComments, new Response.Listener<String>() {
+        StringRequest request = new StringRequest(Request.Method.POST, MainActivity.sUrlForConnectivityCheck, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                if (response.startsWith("no comments")) {
-                    // no comments for this tour
-                    Toast.makeText(context, "No comments for this tour!", Toast.LENGTH_LONG).show();
-                    return;
-                }
-                String[] comments_str = response.split(":::");
-                String[] tmp;
-                for (int i = 0; i < (comments_str.length - 1); i++) {
-                    String s = comments_str[i];
-                    tmp = s.split("--");
-                    authors.add(tmp[0]);
-                    comments.add(tmp[1]);
+                if (response.startsWith("got it")) {
+                    StringRequest stringRequest = new StringRequest(Request.Method.POST, MainActivity.sUrlForPullingComments, new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            if (response.startsWith("no comments")) {
+                                // no comments for this tour
+                                Toast.makeText(context, "No comments for this tour!", Toast.LENGTH_LONG).show();
+                                return;
+                            }
+                            String[] comments_str = response.split(":::");
+                            String[] tmp;
+                            for (int i = 0; i < (comments_str.length - 1); i++) {
+                                String s = comments_str[i];
+                                tmp = s.split("--");
+                                authors.add(tmp[0]);
+                                comments.add(tmp[1]);
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(context, "Something wrong with retrieving comments! Sorry!", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                    }) {
+                        @Override
+                        protected Map<String, String> getParams() throws AuthFailureError {
+                            Map<String, String> params = new HashMap<>();
+                            params.put("tourid", tour_id + "");
+                            return params;
+                        }
+
+                        @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            Map<String, String> params = new HashMap<>();
+                            params.put("Content-Type", "application/x-www-form-urlencoded");
+                            return params;
+                        }
+                    };
+                    mQueue.add(stringRequest);
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(context, "Something wrong with retrieving comments! Sorry!", Toast.LENGTH_LONG).show();
-                return;
+                Toast.makeText(context, "Check your net access, please!!", Toast.LENGTH_LONG).show();
             }
-        }) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("tourid", tour_id + "");
-                return params;
-            }
-
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("Content-Type", "application/x-www-form-urlencoded");
-                return params;
-            }
-        };
-        mQueue.add(stringRequest);
-
+        });
+        mQueue.add(request);
     }
 
     @Override

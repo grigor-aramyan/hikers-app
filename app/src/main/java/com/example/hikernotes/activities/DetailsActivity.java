@@ -64,9 +64,6 @@ public class DetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
-        mSelectedTourID = getIntent().getIntExtra("selected-tour-id", 0);
-
-
         if (mSelectedTourID == 0) {
             Toast.makeText(this, "Sorry! Something went wrong!", Toast.LENGTH_LONG).show();
             return;
@@ -74,10 +71,7 @@ public class DetailsActivity extends AppCompatActivity {
 
         mRealm = Realm.getDefaultInstance();
         mRequestQueue = Volley.newRequestQueue(this);
-
-        AddCommentBlock.mSelectedTourId = mSelectedTourID;
-        ShowCommentsBlock.mSelectedTourID = mSelectedTourID;
-
+        
         initInterfaces();
         initViews();
 

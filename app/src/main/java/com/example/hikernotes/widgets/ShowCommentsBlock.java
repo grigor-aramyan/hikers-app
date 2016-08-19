@@ -17,17 +17,17 @@ import com.example.hikernotes.adapters.CommentsListAdapter;
  */
 public class ShowCommentsBlock extends FrameLayout {
     private RecyclerView mCommentsList;
-    public static int mSelectedTourID;
+    private int mSelectedTourID;
 
     public ShowCommentsBlock(Context context) {
         super(context);
-        //this.mSelectedTourID = DetailsActivity.mSelectedTourID;
+        this.mSelectedTourID = DetailsActivity.mSelectedTourID;
         initViews();
     }
 
     public ShowCommentsBlock(Context context, AttributeSet attrs) {
         super(context, attrs);
-        //this.mSelectedTourID = DetailsActivity.mSelectedTourID;
+        this.mSelectedTourID = DetailsActivity.mSelectedTourID;
         initViews();
     }
 

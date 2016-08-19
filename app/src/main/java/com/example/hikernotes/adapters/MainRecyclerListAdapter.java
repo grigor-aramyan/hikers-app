@@ -90,6 +90,7 @@ public class MainRecyclerListAdapter extends RecyclerView.Adapter<MainRecyclerLi
         holder.mImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                DetailsActivity.mSelectedTourID = tour_id;
                 Intent intent = new Intent(mContext, DetailsActivity.class);
                 intent.putExtra("selected-tour-id", tour_id);
                 mContext.startActivity(intent);

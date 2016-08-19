@@ -36,11 +36,11 @@ public class AddCommentBlock extends FrameLayout {
     private Button react_btn;
     private OnClickListener mClickListener;
     private RequestQueue mQueue;
-    public static int mSelectedTourId;
+    private int mSelectedTourId;
 
     public AddCommentBlock(Context context) {
         super(context);
-        //this.mSelectedTourId = DetailsActivity.mSelectedTourID;
+        this.mSelectedTourId = DetailsActivity.mSelectedTourID;
         mQueue = Volley.newRequestQueue(context);
         initInterfaces();
         initViews();
@@ -48,7 +48,7 @@ public class AddCommentBlock extends FrameLayout {
 
     public AddCommentBlock(Context context, AttributeSet attrs) {
         super(context, attrs);
-        //this.mSelectedTourId = DetailsActivity.mSelectedTourID;
+        this.mSelectedTourId = DetailsActivity.mSelectedTourID;
         mQueue = Volley.newRequestQueue(context);
         initInterfaces();
         initViews();
@@ -75,8 +75,11 @@ public class AddCommentBlock extends FrameLayout {
                                     StringRequest stringRequest1 = new StringRequest(Request.Method.POST, MainActivity.sUrlForNewComment, new Response.Listener<String>() {
                                         @Override
                                         public void onResponse(String response) {
-                                            if (response.startsWith("ok"))
+                                            if (response.startsWith("ok")) {
                                                 Toast.makeText(getContext(), "We add new comment to this tour!!", Toast.LENGTH_LONG).show();
+                                                name_edt.setText("");
+                                                comment_edt.setText("");
+                                            }
                                             if (response.startsWith("Connection"))
                                                 Toast.makeText(getContext(), "con issue", Toast.LENGTH_LONG).show();
                                         }
