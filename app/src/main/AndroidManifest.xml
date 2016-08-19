@@ -33,11 +33,13 @@
         </activity>
         <activity
             android:name=".activities.DetailsActivity"
-            android:label="@string/details_rsc"/>
+            android:label="@string/details_rsc"
+            android:parentActivityName=".MainActivity"/>
         <activity
             android:name=".activities.AddActivity"
             android:label="@string/add_tour_rsc"
-            android:windowSoftInputMode="stateUnchanged"/>
+            android:windowSoftInputMode="stateUnchanged"
+            android:parentActivityName=".MainActivity"/>
         <activity android:name="com.gun0912.tedpicker.ImagePickerActivity"
                   android:screenOrientation="portrait"
                   android:theme="@style/AppThemeForImagePickerActivity"/>

@@ -34,7 +34,6 @@ public class ShowCommentsBlock extends FrameLayout {
     private void initViews() {
         LayoutInflater.from(getContext()).inflate(R.layout.block_show_comments, this, true);
         mCommentsList = (RecyclerView) findViewById(R.id.comments_list);
-        Log.e("yyy", "Tour id: " + mSelectedTourID);
         CommentsListAdapter adapter = new CommentsListAdapter(mSelectedTourID, getContext());
 
         mCommentsList.setLayoutManager(new LinearLayoutManager(getContext()));

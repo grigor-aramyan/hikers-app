@@ -33,4 +33,5 @@ dependencies {
     compile 'com.google.android.gms:play-services-maps:9.4.0'
     compile 'com.google.android.gms:play-services-location:9.4.0'
     compile 'com.github.ParkSangGwon:TedPicker:v1.0.10'
+    compile 'com.bignerdranch.android:simple-item-decoration:1.0.0'
 }

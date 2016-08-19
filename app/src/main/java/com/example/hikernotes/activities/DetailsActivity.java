@@ -49,7 +49,7 @@ import io.realm.RealmResults;
 public class DetailsActivity extends AppCompatActivity {
     private TextView title_txt, date_txt, author_txt, info_txt, likes_txt;
     private ImageView map_image, image_one, image_two, image_tree, image_four, image_five;
-    private Button save_trail_btn, show_comments_btn, add_comment_btn;
+    private Button save_trail_btn, delete_trail_btn, show_comments_btn, add_comment_btn;
     private ImageView upvote_img_btn, downvote_img_btn;
     private Realm mRealm;
     private RequestQueue mRequestQueue;
@@ -64,6 +64,9 @@ public class DetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         if (mSelectedTourID == 0) {
             Toast.makeText(this, "Sorry! Something went wrong!", Toast.LENGTH_LONG).show();
             return;
@@ -71,7 +74,7 @@ public class DetailsActivity extends AppCompatActivity {
 
         mRealm = Realm.getDefaultInstance();
         mRequestQueue = Volley.newRequestQueue(this);
-        
+
         initInterfaces();
         initViews();
 
@@ -124,6 +127,12 @@ public class DetailsActivity extends AppCompatActivity {
             }
         });
         mRequestQueue.add(jsonObjectRequest);
+
+        RealmResults realmResults1 = mRealm.where(SavedTrail.class).equalTo("id", mSelectedTourID).findAll();
+        if (realmResults1.size() > 0) {
+            save_trail_btn.setVisibility(View.GONE);
+            delete_trail_btn.setVisibility(View.VISIBLE);
+        }
     }
 
     private void initViews() {
@@ -143,6 +152,9 @@ public class DetailsActivity extends AppCompatActivity {
 
         save_trail_btn = (Button) findViewById(R.id.save_trail_btn_id);
         save_trail_btn.setOnClickListener(mClickListener);
+        delete_trail_btn = (Button) findViewById(R.id.delete_trail_btn_id);
+        delete_trail_btn.setOnClickListener(mClickListener);
+
         show_comments_btn = (Button) findViewById(R.id.show_comments_btn_id);
         show_comments_btn.setOnClickListener(mClickListener);
         add_comment_btn = (Button) findViewById(R.id.add_comment_btn_id);
@@ -163,6 +175,18 @@ public class DetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 switch (v.getId()){
+                    case R.id.delete_trail_btn_id:
+                        final RealmResults realmResults = mRealm.where(SavedTrail.class).equalTo("id", mSelectedTourID).findAll();
+                        mRealm.executeTransaction(new Realm.Transaction() {
+                            @Override
+                            public void execute(Realm realm) {
+                                realmResults.clear();
+                            }
+                        });
+                        Intent intent1 = new Intent(getApplicationContext(), DetailsActivity.class);
+                        intent1.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent1);
+                        break;
                     case R.id.add_comment_btn_id:
                         mAddCommentBlock.setVisibility((mAddCommentBlock.getVisibility() == View.GONE)?View.VISIBLE:View.GONE);
                         break;

@@ -2,15 +2,18 @@ package com.example.hikernotes.fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.dgreenhalgh.android.simpleitemdecoration.linear.DividerItemDecoration;
 import com.example.hikernotes.R;
 import com.example.hikernotes.adapters.MainRecyclerListAdapter;
 
@@ -33,6 +36,8 @@ public class RecyclerFragment extends Fragment {
         MainRecyclerListAdapter listAdapter = new MainRecyclerListAdapter(page_number, sort_flag);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        /*Drawable divider_drawable = ContextCompat.getDrawable(getActivity(), R.drawable.list_decor);
+        recyclerView.addItemDecoration(new DividerItemDecoration(divider_drawable));*/
         recyclerView.setAdapter(listAdapter);
 
         return view;

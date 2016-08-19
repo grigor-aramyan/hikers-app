@@ -79,6 +79,9 @@ public class AddActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         mRealm = Realm.getDefaultInstance();
         mRequestQueue = Volley.newRequestQueue(this);
 

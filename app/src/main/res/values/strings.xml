@@ -16,4 +16,5 @@
     <string name="react_with_comment_rsc">React</string>
     <string name="show_comments_rsc">Show comments</string>
     <string name="say_somethi_n_rsc">Say somethi\'n</string>
+    <string name="delete_trail_rsc">Delete trail</string>
 </resources>

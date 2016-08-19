@@ -120,6 +120,13 @@
             android:layout_weight="2"
             android:id="@+id/save_trail_btn_id"
             android:text="@string/save_trail_rsc"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:id="@+id/delete_trail_btn_id"
+            android:text="@string/delete_trail_rsc"
+            android:visibility="gone"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"

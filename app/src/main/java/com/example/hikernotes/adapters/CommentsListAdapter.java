@@ -110,11 +110,9 @@ public class CommentsListAdapter extends RecyclerView.Adapter<CommentsListAdapte
 
     @Override
     public void onBindViewHolder(CommentViewHolder holder, int position) {
-        Log.e("yyy", "Position: " + position);
         int real_position = comments.size() - position - 1;
         holder.name_txt.setText(authors.get(real_position));
         holder.comment_txt.setText(comments.get(real_position));
-        Log.e("yyy", "comments size: " + comments.size());
     }
 
     @Override

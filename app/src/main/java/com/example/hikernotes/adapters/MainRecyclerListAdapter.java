@@ -77,6 +77,7 @@ public class MainRecyclerListAdapter extends RecyclerView.Adapter<MainRecyclerLi
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         mContext = parent.getContext();
         View list_row = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_main_list, parent, false);
+        list_row.setBackgroundColor(mContext.getResources().getColor(R.color.colorMaterialOrange));
         return new MyViewHolder(list_row);
     }
 
@@ -85,7 +86,7 @@ public class MainRecyclerListAdapter extends RecyclerView.Adapter<MainRecyclerLi
         final Tour tour = tours.get(position);
         holder.mTitle.setText(tour.getTitle());
         holder.mDate.setText(tour.getDate());
-        holder.mLikes.setText(tour.getLikes() + "");
+        holder.mLikes.setText("Likes: " + tour.getLikes());
         final int tour_id = tour.getId();
         holder.mImageView.setOnClickListener(new View.OnClickListener() {
             @Override
