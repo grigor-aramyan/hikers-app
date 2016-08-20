@@ -18,6 +18,8 @@ import com.android.volley.toolbox.Volley;
 import com.example.hikernotes.R;
 import com.example.hikernotes.realms.Tour;
 import com.example.hikernotes.activities.DetailsActivity;
+import com.example.hikernotes.utils.MeasureUnitConversionUtils;
+import com.squareup.picasso.Picasso;
 
 import io.realm.Realm;
 import io.realm.RealmList;
@@ -30,6 +32,7 @@ import io.realm.Sort;
 public class MainRecyclerListAdapter extends RecyclerView.Adapter<MainRecyclerListAdapter.MyViewHolder> {
     private RealmList<Tour> tours;
     private Context mContext;
+    private int thumb_size_in_px = 1;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public ImageView mImageView;
@@ -71,6 +74,7 @@ public class MainRecyclerListAdapter extends RecyclerView.Adapter<MainRecyclerLi
         for (Tour tour: realmResults) {
             tours.add(tour);
         }
+
     }
 
     @Override
@@ -78,6 +82,11 @@ public class MainRecyclerListAdapter extends RecyclerView.Adapter<MainRecyclerLi
         mContext = parent.getContext();
         View list_row = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_main_list, parent, false);
         list_row.setBackgroundColor(mContext.getResources().getColor(R.color.colorMaterialOrange));
+
+        if (thumb_size_in_px == 1) {
+            thumb_size_in_px = (int) MeasureUnitConversionUtils.convertDpToPixel(180.0f, mContext);
+        }
+
         return new MyViewHolder(list_row);
     }
 
@@ -93,23 +102,13 @@ public class MainRecyclerListAdapter extends RecyclerView.Adapter<MainRecyclerLi
             public void onClick(View v) {
                 DetailsActivity.mSelectedTourID = tour_id;
                 Intent intent = new Intent(mContext, DetailsActivity.class);
-                intent.putExtra("selected-tour-id", tour_id);
                 mContext.startActivity(intent);
             }
         });
-        RequestQueue queue = Volley.newRequestQueue(mContext);
-        ImageRequest imageRequest = new ImageRequest(tour.getThumb_img_ref(), new Response.Listener<Bitmap>() {
-            @Override
-            public void onResponse(Bitmap response) {
-                holder.mImageView.setImageBitmap(response);
-            }
-        }, 0, 0, null, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
 
-            }
-        });
-        queue.add(imageRequest);
+        String[] img_refs = tour.getImg_references_str().split("---");
+
+        Picasso.with(mContext).load(img_refs[0]).resize(thumb_size_in_px, thumb_size_in_px).centerCrop().into(holder.mImageView);
 
     }
 

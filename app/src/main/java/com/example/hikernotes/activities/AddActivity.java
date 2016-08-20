@@ -35,8 +35,10 @@ import com.example.hikernotes.MapsActivity;
 import com.example.hikernotes.R;
 import com.example.hikernotes.realms.CurrentTour;
 import com.example.hikernotes.services.LocationUpdateService;
+import com.example.hikernotes.utils.MeasureUnitConversionUtils;
 import com.gun0912.tedpicker.Config;
 import com.gun0912.tedpicker.ImagePickerActivity;
+import com.squareup.picasso.Picasso;
 
 import net.gotev.uploadservice.MultipartUploadRequest;
 import net.gotev.uploadservice.ServerResponse;
@@ -46,6 +48,7 @@ import net.gotev.uploadservice.UploadStatusDelegate;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -73,6 +76,7 @@ public class AddActivity extends AppCompatActivity {
     private ArrayList<ImageView> tour_images = new ArrayList<>();
     private Realm mRealm;
     private RequestQueue mRequestQueue;
+    private int mImageSizeInPx;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -84,6 +88,8 @@ public class AddActivity extends AppCompatActivity {
 
         mRealm = Realm.getDefaultInstance();
         mRequestQueue = Volley.newRequestQueue(this);
+
+        mImageSizeInPx = (int) MeasureUnitConversionUtils.convertDpToPixel(160.0f, this);
 
         initInterfaces();
         initViews();
@@ -115,20 +121,21 @@ public class AddActivity extends AppCompatActivity {
         int uri_qnt = mImage_uris.size();
         if (uri_qnt == 0)
             return;
-        Bitmap bitmap = null;
         for (int i = 0; i < uri_qnt; i++) {
-            bitmap = BitmapFactory.decodeFile(mImage_uris.get(i).toString());
-            tour_images.get(i).setImageBitmap(bitmap);
+            Picasso.with(this).load(new File(mImage_uris.get(i).toString())).resize(mImageSizeInPx, mImageSizeInPx).centerCrop().into(tour_images.get(i));
         }
 
         int remaining_view_count = IMAGES_MAX_QNTY - uri_qnt;
         if (remaining_view_count == 0)
             return;
 
-        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.default_img);
-        for (int j = 4; j > (IMAGES_MAX_QNTY - remaining_view_count - 1); j--) {
-            tour_images.get(j).setImageBitmap(bitmap);
-        }
+        Picasso.with(this).load(R.drawable.add_button).resize(mImageSizeInPx, mImageSizeInPx).centerCrop().into(tour_images.get(uri_qnt));
+        tour_images.get(uri_qnt).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getImages();
+            }
+        });
     }
 
     private void getImages() {
@@ -158,19 +165,19 @@ public class AddActivity extends AppCompatActivity {
         tour_img_one.setOnLongClickListener(mLongClickListener);
         tour_images.add(tour_img_one);
         tour_img_two = (ImageView) findViewById(R.id.img_2_id);
-        tour_img_two.setOnClickListener(mClickListener);
+        //tour_img_two.setOnClickListener(mClickListener);
         tour_img_two.setOnLongClickListener(mLongClickListener);
         tour_images.add(tour_img_two);
         tour_img_tree = (ImageView) findViewById(R.id.img_3_id);
-        tour_img_tree.setOnClickListener(mClickListener);
+        //tour_img_tree.setOnClickListener(mClickListener);
         tour_img_tree.setOnLongClickListener(mLongClickListener);
         tour_images.add(tour_img_tree);
         tour_img_four = (ImageView) findViewById(R.id.img_4_id);
-        tour_img_four.setOnClickListener(mClickListener);
+        //tour_img_four.setOnClickListener(mClickListener);
         tour_img_four.setOnLongClickListener(mLongClickListener);
         tour_images.add(tour_img_four);
         tour_img_five = (ImageView) findViewById(R.id.img_5_id);
-        tour_img_five.setOnClickListener(mClickListener);
+        //tour_img_five.setOnClickListener(mClickListener);
         tour_img_five.setOnLongClickListener(mLongClickListener);
         tour_images.add(tour_img_five);
 

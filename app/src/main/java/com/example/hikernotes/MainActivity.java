@@ -32,6 +32,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -203,19 +205,22 @@ public class MainActivity extends AppCompatActivity {
                 if (response.length() > 1) {
                     JSONObject jsonObject;
                     Tour tour;
-                    String title, date, reference;
+                    String title, date, references, author, info, trail;
                     int id, likes;
                     for (int i = 0; i < (response.length() - 1); i++) {
                         try {
                             jsonObject = response.getJSONObject(i);
                             title = jsonObject.getString("title");
                             date = jsonObject.getString("date");
-                            reference = jsonObject.getString("reference");
+                            references = jsonObject.getString("references");
+                            author = jsonObject.getString("author");
+                            info = jsonObject.getString("info");
                             id = jsonObject.getInt("id");
                             likes = jsonObject.getInt("likes");
+                            trail = jsonObject.getString("trail");
 
                             mRealm.beginTransaction();
-                            tour = new Tour(id, title, date, likes, reference);
+                            tour = new Tour(id, author, title, date, info, likes, trail, references);
                             mRealm.copyToRealmOrUpdate(tour);
                             mRealm.commitTransaction();
                         } catch (JSONException jsconExp) { Log.e("yyy", "some json exp");}
@@ -230,6 +235,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(getApplication(), "Couldn't retrieve data from serv!! Locals will be used!!", Toast.LENGTH_LONG).show();
+                Log.e("mmm", error.getMessage());
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("flag_continue", 2);
+                startActivity(intent);
             }
         });
         mQueue.add(jsonArrayRequest);

@@ -31,12 +31,15 @@ import com.example.hikernotes.R;
 import com.example.hikernotes.realms.Tour;
 import com.example.hikernotes.cache.LruBitmapCache;
 import com.example.hikernotes.realms.SavedTrail;
+import com.example.hikernotes.utils.MeasureUnitConversionUtils;
 import com.example.hikernotes.widgets.AddCommentBlock;
 import com.example.hikernotes.widgets.ShowCommentsBlock;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,6 +61,7 @@ public class DetailsActivity extends AppCompatActivity {
     private String mTrail, mTitle;
     private AddCommentBlock mAddCommentBlock;
     private ShowCommentsBlock mShowCommentsBlock;
+    private ArrayList<ImageView> mImagesForTour = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -86,47 +90,19 @@ public class DetailsActivity extends AppCompatActivity {
             mTitle = tour.getTitle();
             date_txt.setText("Date: " + tour.getDate());
             likes_txt.setText("Likes: " + tour.getLikes());
-        }
+            author_txt.setText("Author: " + tour.getAuthor());
+            info_txt.setText(tour.getInfo());
+            mTrail = tour.getTrail();
 
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("id", mSelectedTourID);
-        } catch (JSONException je) {}
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, MainActivity.sUrlForTourDetails, jsonObject, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                String images_str = null;
-                try {
-                    author_txt.setText("Author: " + response.getString("author"));
-                    info_txt.setText(response.getString("info"));
-                    images_str = response.getString("links");
-                    mTrail = response.getString("trail");
-                } catch (JSONException je) {
-                }
-                if (images_str == null) {
-                    Toast.makeText(getApplication(), "Can't fetch images! Sorry!!", Toast.LENGTH_LONG).show();
-                    return;
-                }
-                String[] img_urls = new String[5];
-                img_urls[0] = images_str.split(":::")[0];
-                img_urls[1] = images_str.split(":::")[1];
-                img_urls[2] = images_str.split(":::")[2];
-                img_urls[3] = images_str.split(":::")[3];
-                img_urls[4] = images_str.split(":::")[4];
-                ImageLoader imageLoader = new ImageLoader(mRequestQueue, new LruBitmapCache(LruBitmapCache.getCacheSize(getApplication())));
-                imageLoader.get(img_urls[0], ImageLoader.getImageListener(image_one, R.drawable.default_img, R.drawable.error_img));
-                imageLoader.get(img_urls[1], ImageLoader.getImageListener(image_two, R.drawable.default_img, R.drawable.error_img));
-                imageLoader.get(img_urls[2], ImageLoader.getImageListener(image_tree, R.drawable.default_img, R.drawable.error_img));
-                imageLoader.get(img_urls[3], ImageLoader.getImageListener(image_four, R.drawable.default_img, R.drawable.error_img));
-                imageLoader.get(img_urls[4], ImageLoader.getImageListener(image_five, R.drawable.default_img, R.drawable.error_img));
+            int image_size_in_px = (int) MeasureUnitConversionUtils.convertDpToPixel(150.0f, this);
+
+            String[] img_refs = tour.getImg_references_str().split("---");
+
+            for (int i = 0; i < img_refs.length; i++) {
+                Picasso.with(this).load(img_refs[i]).resize(image_size_in_px, image_size_in_px).centerCrop().into(mImagesForTour.get(i));
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplication(), "Error on fetching photos from db", Toast.LENGTH_LONG).show();
-            }
-        });
-        mRequestQueue.add(jsonObjectRequest);
+
+        }
 
         RealmResults realmResults1 = mRealm.where(SavedTrail.class).equalTo("id", mSelectedTourID).findAll();
         if (realmResults1.size() > 0) {
@@ -149,6 +125,12 @@ public class DetailsActivity extends AppCompatActivity {
         image_tree = (ImageView) findViewById(R.id.img_3_id);
         image_four = (ImageView) findViewById(R.id.img_4_id);
         image_five = (ImageView) findViewById(R.id.img_5_id);
+
+        mImagesForTour.add(image_one);
+        mImagesForTour.add(image_two);
+        mImagesForTour.add(image_tree);
+        mImagesForTour.add(image_four);
+        mImagesForTour.add(image_five);
 
         save_trail_btn = (Button) findViewById(R.id.save_trail_btn_id);
         save_trail_btn.setOnClickListener(mClickListener);

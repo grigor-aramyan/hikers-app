@@ -47,32 +47,28 @@
                     android:layout_width="160dp"
                     android:layout_height="160dp"
                     android:id="@+id/img_1_id"
-                    android:src="@drawable/default_img"
+                    android:src="@drawable/add_button"
                     android:layout_marginRight="8dp"/>
                 <ImageView
                     android:layout_marginRight="8dp"
                     android:layout_width="160dp"
                     android:layout_height="160dp"
-                    android:id="@+id/img_2_id"
-                    android:src="@drawable/default_img"/>
+                    android:id="@+id/img_2_id"/>
                 <ImageView
                     android:layout_marginRight="8dp"
                     android:layout_width="160dp"
                     android:layout_height="160dp"
-                    android:id="@+id/img_3_id"
-                    android:src="@drawable/default_img"/>
+                    android:id="@+id/img_3_id"/>
                 <ImageView
                     android:layout_marginRight="8dp"
                     android:layout_width="160dp"
                     android:layout_height="160dp"
-                    android:id="@+id/img_4_id"
-                    android:src="@drawable/default_img"/>
+                    android:id="@+id/img_4_id"/>
                 <ImageView
                     android:layout_marginRight="8dp"
                     android:layout_width="160dp"
                     android:layout_height="160dp"
-                    android:id="@+id/img_5_id"
-                    android:src="@drawable/default_img"/>
+                    android:id="@+id/img_5_id"/>
             </LinearLayout>
         </HorizontalScrollView>
     </LinearLayout>
