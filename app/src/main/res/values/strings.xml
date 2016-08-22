@@ -2,7 +2,7 @@
     <string name="app_name">HikerNotes</string>
     <string name="action_settings">Settings</string>
     <string name="save_trail_rsc">Save trail</string>
-    <string name="save_rsc">Save</string>
+    <string name="save_rsc">Save Locally</string>
     <string name="upload_rsc">Upload</string>
     <string name="add_tour_rsc">Add tour</string>
     <string name="details_rsc">Details</string>

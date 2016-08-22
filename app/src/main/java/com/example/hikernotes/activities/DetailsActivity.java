@@ -111,6 +111,10 @@ public class DetailsActivity extends AppCompatActivity {
             save_trail_btn.setVisibility(View.GONE);
             delete_trail_btn.setVisibility(View.VISIBLE);
         }
+
+        int flag_open_comments = getIntent().getIntExtra("flag-comments", 1);
+        if (flag_open_comments == 11)
+            mShowCommentsBlock.setVisibility(View.VISIBLE);
     }
 
     private void initViews() {

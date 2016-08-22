@@ -36,8 +36,8 @@ public class RecyclerFragment extends Fragment {
         MainRecyclerListAdapter listAdapter = new MainRecyclerListAdapter(page_number, sort_flag);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        /*Drawable divider_drawable = ContextCompat.getDrawable(getActivity(), R.drawable.list_decor);
-        recyclerView.addItemDecoration(new DividerItemDecoration(divider_drawable));*/
+        Drawable divider_drawable = ContextCompat.getDrawable(getActivity(), R.drawable.list_decor);
+        recyclerView.addItemDecoration(new DividerItemDecoration(divider_drawable));
         recyclerView.setAdapter(listAdapter);
 
         return view;

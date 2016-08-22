@@ -76,12 +76,12 @@ public class AddCommentBlock extends FrameLayout {
                                         @Override
                                         public void onResponse(String response) {
                                             if (response.startsWith("ok")) {
-                                                Toast.makeText(getContext(), "We add new comment to this tour!!", Toast.LENGTH_LONG).show();
+                                                Toast.makeText(getContext(), "We add new comment to this tour!! Update to see it!!", Toast.LENGTH_LONG).show();
                                                 name_edt.setText("");
                                                 comment_edt.setText("");
                                             }
                                             if (response.startsWith("Connection"))
-                                                Toast.makeText(getContext(), "con issue", Toast.LENGTH_LONG).show();
+                                                Toast.makeText(getContext(), "Connection issue! Try later, pease!!", Toast.LENGTH_LONG).show();
                                         }
                                     }, new Response.ErrorListener() {
                                         @Override
