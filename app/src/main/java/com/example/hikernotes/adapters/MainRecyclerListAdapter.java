@@ -21,6 +21,8 @@ import com.example.hikernotes.activities.DetailsActivity;
 import com.example.hikernotes.utils.MeasureUnitConversionUtils;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
+
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmResults;
@@ -51,15 +53,13 @@ public class MainRecyclerListAdapter extends RecyclerView.Adapter<MainRecyclerLi
     }
 
     public MainRecyclerListAdapter(int page_number, int sort_flag) {
-        int start_id = page_number * 10 + 1;
-        int end_id;
-        if (start_id == 1) {
-            end_id = 10;
-        } else {
-            end_id = start_id + 9;
-        }
+
+        int start_index, end_index;
+        start_index = page_number * 10;
+        end_index = start_index + 9;
+
         Realm realm = Realm.getDefaultInstance();
-        RealmResults<Tour> realmResults = realm.where(Tour.class).between("id", start_id, end_id).findAll();
+        RealmResults<Tour> realmResults = realm.where(Tour.class).findAll();
         switch (sort_flag) {
             case 1:
                 realmResults.sort("date", Sort.DESCENDING);
@@ -71,8 +71,13 @@ public class MainRecyclerListAdapter extends RecyclerView.Adapter<MainRecyclerLi
                 break;
         }
         tours = new RealmList<>();
-        for (Tour tour: realmResults) {
-            tours.add(tour);
+
+        int realm_results_last_index = realmResults.size() - 1;
+        if (end_index > realm_results_last_index)
+            end_index = realm_results_last_index;
+
+        for (int i = start_index; i <= end_index; i++) {
+            tours.add(realmResults.get(i));
         }
 
     }
@@ -94,7 +99,8 @@ public class MainRecyclerListAdapter extends RecyclerView.Adapter<MainRecyclerLi
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         final Tour tour = tours.get(position);
         holder.mTitle.setText(tour.getTitle());
-        holder.mDate.setText(tour.getDate());
+        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
+        holder.mDate.setText(formatter.format(tour.getDate()));
         holder.mLikes.setText("Likes: " + tour.getLikes());
         final int tour_id = tour.getId();
         holder.mImageView.setOnClickListener(new View.OnClickListener() {

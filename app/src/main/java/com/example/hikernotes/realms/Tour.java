@@ -1,6 +1,7 @@
 package com.example.hikernotes.realms;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -13,7 +14,7 @@ public class Tour extends RealmObject {
     private int id;
     private String author;
     private String title;
-    private String date;
+    private Date date;
     private String info;
     private int likes;
     private String img_references_str;
@@ -22,7 +23,7 @@ public class Tour extends RealmObject {
     public Tour() {
     }
 
-    public Tour(int id, String author, String title, String date, String info, int likes, String trail, String img_references) {
+    public Tour(int id, String author, String title, Date date, String info, int likes, String trail, String img_references) {
         this.id = id;
         this.author = author;
         this.title = title;
@@ -65,11 +66,11 @@ public class Tour extends RealmObject {
         this.title = title;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 

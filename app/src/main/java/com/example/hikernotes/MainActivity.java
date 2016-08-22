@@ -32,6 +32,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import io.realm.Realm;
@@ -204,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(JSONArray response) {
                 if (response.length() > 1) {
                     JSONObject jsonObject;
-                    Tour tour;
+                    Tour tour = null;
                     String title, date, references, author, info, trail;
                     int id, likes;
                     for (int i = 0; i < (response.length() - 1); i++) {
@@ -219,8 +221,17 @@ public class MainActivity extends AppCompatActivity {
                             likes = jsonObject.getInt("likes");
                             trail = jsonObject.getString("trail");
 
+                            SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
+
                             mRealm.beginTransaction();
-                            tour = new Tour(id, author, title, date, info, likes, trail, references);
+                            try {
+                                tour = new Tour(id, author, title, formatter.parse(date), info, likes, trail, references);
+                            } catch (ParseException pExp) {
+                                if (null == tour) {
+                                    Toast.makeText(getApplicationContext(), "Major problem occured!! Sorry, guys. Doing best to make it better!!", Toast.LENGTH_LONG).show();
+                                    return;
+                                }
+                            }
                             mRealm.copyToRealmOrUpdate(tour);
                             mRealm.commitTransaction();
                         } catch (JSONException jsconExp) { Log.e("yyy", "some json exp");}

@@ -39,6 +39,7 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -88,7 +89,8 @@ public class DetailsActivity extends AppCompatActivity {
             Tour tour = realmResults.get(0);
             title_txt.setText("Title: " + tour.getTitle());
             mTitle = tour.getTitle();
-            date_txt.setText("Date: " + tour.getDate());
+            SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
+            date_txt.setText("Date: " + formatter.format(tour.getDate()));
             likes_txt.setText("Likes: " + tour.getLikes());
             author_txt.setText("Author: " + tour.getAuthor());
             info_txt.setText(tour.getInfo());
