@@ -2,6 +2,7 @@ package com.example.hikernotes.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +27,7 @@ import io.realm.Sort;
  * Created by John on 8/16/2016.
  */
 public class MainRecyclerListAdapter extends RecyclerView.Adapter<MainRecyclerListAdapter.MyViewHolder> {
-    private RealmList<Tour> tours;
+    private RealmList<Tour> mDataset;
     private Context mContext;
     private int thumb_height_in_px = 1;
     private int thumb_width_in_px = 1;
@@ -39,7 +40,6 @@ public class MainRecyclerListAdapter extends RecyclerView.Adapter<MainRecyclerLi
 
         public MyViewHolder(View itemView) {
             super(itemView);
-
             this.mImageView = (ImageView) itemView.findViewById(R.id.item_image_id);
             this.mTitle = (TextView) itemView.findViewById(R.id.item_title_id);
             this.mDate = (TextView) itemView.findViewById(R.id.item_date_id);
@@ -47,41 +47,16 @@ public class MainRecyclerListAdapter extends RecyclerView.Adapter<MainRecyclerLi
         }
     }
 
-    public MainRecyclerListAdapter(int page_number, int sort_flag) {
-
-        int start_index, end_index;
-        start_index = page_number * 10;
-        end_index = start_index + 9;
-
-        Realm realm = Realm.getDefaultInstance();
-        RealmResults<Tour> realmResults = realm.where(Tour.class).findAll();
-        switch (sort_flag) {
-            case 1:
-                realmResults.sort("date", Sort.DESCENDING);
-                break;
-            case 2:
-                realmResults.sort("likes", Sort.DESCENDING);
-                break;
-            default:
-                break;
-        }
-        tours = new RealmList<>();
-
-        int realm_results_last_index = realmResults.size() - 1;
-        if (end_index > realm_results_last_index)
-            end_index = realm_results_last_index;
-
-        for (int i = start_index; i <= end_index; i++) {
-            tours.add(realmResults.get(i));
-        }
-
+    public MainRecyclerListAdapter(RealmList<Tour> toursList) {
+        mDataset = toursList;
     }
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         mContext = parent.getContext();
-        View list_row = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_row_main_list, parent, false);
+        CardView list_row = (CardView) LayoutInflater.from(parent.getContext()).inflate(R.layout.item_row_main_list, parent, false);
         //list_row.setBackgroundColor(mContext.getResources().getColor(R.color.colorMaterialOrange));
+        list_row.setCardBackgroundColor(mContext.getResources().getColor(R.color.colorMaterialOrange));
 
         if (thumb_height_in_px == 1) {
             thumb_height_in_px = (int) MeasureUnitConversionUtils.convertDpToPixel(180.0f, mContext);
@@ -95,7 +70,7 @@ public class MainRecyclerListAdapter extends RecyclerView.Adapter<MainRecyclerLi
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
-        final Tour tour = tours.get(position);
+        final Tour tour = mDataset.get(position);
         holder.mTitle.setText(tour.getTitle());
         SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
         holder.mDate.setText(formatter.format(tour.getDate()));
@@ -118,6 +93,6 @@ public class MainRecyclerListAdapter extends RecyclerView.Adapter<MainRecyclerLi
 
     @Override
     public int getItemCount() {
-        return tours.size();
+        return mDataset.size();
     }
 }

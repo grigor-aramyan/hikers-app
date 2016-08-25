@@ -40,9 +40,9 @@
             android:label="@string/add_tour_rsc"
             android:windowSoftInputMode="stateUnchanged"
             android:parentActivityName=".MainActivity"/>
-        <activity android:name="com.gun0912.tedpicker.ImagePickerActivity"
+        <!--activity android:name="com.gun0912.tedpicker.ImagePickerActivity"
                   android:screenOrientation="portrait"
-                  android:theme="@style/AppThemeForImagePickerActivity"/>
+                  android:theme="@style/AppThemeForImagePickerActivity"/-->
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").

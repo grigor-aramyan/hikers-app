@@ -36,8 +36,6 @@ import com.example.hikernotes.R;
 import com.example.hikernotes.realms.CurrentTour;
 import com.example.hikernotes.services.LocationUpdateService;
 import com.example.hikernotes.utils.MeasureUnitConversionUtils;
-import com.gun0912.tedpicker.Config;
-import com.gun0912.tedpicker.ImagePickerActivity;
 import com.squareup.picasso.Picasso;
 
 import net.gotev.uploadservice.MultipartUploadRequest;
@@ -155,13 +153,13 @@ public class AddActivity extends AppCompatActivity {
             Toast.makeText(this, "Only 5 images allowed!! Delete some first by long clicking on them!!", Toast.LENGTH_LONG).show();
             return;
         }
-        Config config = new Config();
+        /*Config config = new Config();
         config.setSelectionLimit(selectionLimit);
 
         ImagePickerActivity.setConfig(config);
 
         Intent intent = new Intent(this, ImagePickerActivity.class);
-        startActivityForResult(intent, INTENT_REQUEST_GET_IMAGES);
+        startActivityForResult(intent, INTENT_REQUEST_GET_IMAGES);*/
     }
 
     private void initViews() {
@@ -512,16 +510,9 @@ public class AddActivity extends AppCompatActivity {
                 case LocationUpdateService.REQUEST_CODE_FOR_RESOLUTION_REQUEST:
                     Toast.makeText(this, "If you enabled settings, try to start tracking again!!", Toast.LENGTH_LONG).show();
                     break;
-                case INTENT_REQUEST_GET_IMAGES:
-                    if (mImage_uris.size() == 0) {
-                        mImage_uris = data.getParcelableArrayListExtra(ImagePickerActivity.EXTRA_IMAGE_URIS);
-                        setImageViewsSrc();
-                    } else {
-                        ArrayList<Uri> temp = data.getParcelableArrayListExtra(ImagePickerActivity.EXTRA_IMAGE_URIS);
-                        mImage_uris.addAll(temp);
-                        setImageViewsSrc();
-                    }
-                    break;
+
+
+
                 default:
                     break;
 

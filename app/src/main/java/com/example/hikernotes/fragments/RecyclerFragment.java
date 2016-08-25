@@ -16,30 +16,91 @@ import android.view.ViewGroup;
 import com.dgreenhalgh.android.simpleitemdecoration.linear.DividerItemDecoration;
 import com.example.hikernotes.R;
 import com.example.hikernotes.adapters.MainRecyclerListAdapter;
+import com.example.hikernotes.realms.Tour;
+import com.example.hikernotes.utils.EndlessRecyclerViewScrollListener;
+
+import io.realm.Realm;
+import io.realm.RealmList;
+import io.realm.RealmResults;
+import io.realm.Sort;
 
 /**
  * Created by John on 8/16/2016.
  */
 public class RecyclerFragment extends Fragment {
-    private int page_number;
+    //    private int page_number;
+    private RealmList<Tour> mToursList;
+    private int SORT_FLAG = 1;
+    private MainRecyclerListAdapter mListAdapter;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main_list, container, false);
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_list);
-        page_number = getArguments().getInt("page", 0);
-
+//        page_number = getArguments().getInt("page", 0);
+        mToursList = new RealmList<>();
         SharedPreferences sharedPreferences = getContext().getSharedPreferences("sort_type", Context.MODE_PRIVATE);
-        int sort_flag = sharedPreferences.getInt("sort_by", 1);
+        SORT_FLAG = sharedPreferences.getInt("sort_by", 1);
 
-        MainRecyclerListAdapter listAdapter = new MainRecyclerListAdapter(page_number, sort_flag);
+        mListAdapter = new MainRecyclerListAdapter(mToursList);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.addOnScrollListener(new EndlessRecyclerViewScrollListener(layoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount) {
+                loadMore(page);
+            }
+        });
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
         /*Drawable divider_drawable = ContextCompat.getDrawable(getActivity(), R.drawable.list_decor);
         recyclerView.addItemDecoration(new DividerItemDecoration(divider_drawable));*/
-        recyclerView.setAdapter(listAdapter);
-
+        recyclerView.setAdapter(mListAdapter);
+        getTours(mToursList, 0, SORT_FLAG);
         return view;
     }
+
+    void loadMore(int page) {
+        if (page == 0) {
+            mToursList.clear();
+        }
+
+        getTours(mToursList, page, SORT_FLAG);
+        mListAdapter.notifyDataSetChanged();
+
+    }
+
+    void getTours(RealmList<Tour> tours, int page_number, int sort_flag) {
+        int start_id = page_number * 10 + 1;
+        int end_id;
+        if (start_id == 1) {
+            end_id = 10;
+        } else {
+            end_id = start_id + 9;
+        }
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<Tour> realmResults = realm.where(Tour.class).between("id", start_id, end_id).findAll();
+        switch (sort_flag) {
+            case 1:
+
+                realmResults.sort("date", Sort.DESCENDING);
+
+                break;
+            case 2:
+
+                realmResults.sort("likes", Sort.DESCENDING);
+
+                break;
+            default:
+                break;
+        }
+
+        System.out.println("*********************start_id = " + start_id);
+        System.out.println("*********************end_id = " + end_id);
+
+        tours.addAll(realmResults); // pochic avelacnum enq load exacner@
+
+    }
+
 }

@@ -33,14 +33,16 @@ public class MyPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        Realm realm = Realm.getDefaultInstance();
-        RealmResults<Tour> realmResults = realm.where(Tour.class).findAll();
-        if (realmResults.size() > 0) {
-            int page_count = (int) Math.floor(realmResults.size() / 10 + 1);
-            return page_count;
-        } else {
-            return 0;
-        }
+//        Realm realm = Realm.getDefaultInstance();
+//        RealmResults<Tour> realmResults = realm.where(Tour.class).findAll();
+//        if (realmResults.size() > 0) {
+//            int page_count = (int) Math.floor(realmResults.size() / 10 + 1);
+//            return page_count;
+//        } else {
+//            return 0;
+//        }
+
+        return 1;
     }
 
     public Fragment getUpdatedItem() {
