@@ -246,7 +246,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(getApplication(), "Couldn't retrieve data from serv!! Locals will be used!!", Toast.LENGTH_LONG).show();
-                Log.e("mmm", error.getMessage());
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.putExtra("flag_continue", 2);

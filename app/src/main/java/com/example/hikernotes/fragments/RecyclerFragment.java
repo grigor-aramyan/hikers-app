@@ -72,34 +72,29 @@ public class RecyclerFragment extends Fragment {
     }
 
     void getTours(RealmList<Tour> tours, int page_number, int sort_flag) {
-        int start_id = page_number * 10 + 1;
-        int end_id;
-        if (start_id == 1) {
-            end_id = 10;
-        } else {
-            end_id = start_id + 9;
-        }
+        int start_index = page_number * 10;
+        int end_index = start_index + 9;
+
         Realm realm = Realm.getDefaultInstance();
-        RealmResults<Tour> realmResults = realm.where(Tour.class).between("id", start_id, end_id).findAll();
+        RealmResults<Tour> realmResults = realm.where(Tour.class).findAll();
         switch (sort_flag) {
             case 1:
-
                 realmResults.sort("date", Sort.DESCENDING);
-
                 break;
             case 2:
-
                 realmResults.sort("likes", Sort.DESCENDING);
-
                 break;
             default:
                 break;
         }
 
-        System.out.println("*********************start_id = " + start_id);
-        System.out.println("*********************end_id = " + end_id);
+        int realm_results_last_index = realmResults.size() - 1;
+        if (end_index > realm_results_last_index)
+            end_index = realm_results_last_index;
 
-        tours.addAll(realmResults); // pochic avelacnum enq load exacner@
+        for (int i = start_index; i <= end_index; i++) {
+            tours.add(realmResults.get(i));
+        }
 
     }
 
