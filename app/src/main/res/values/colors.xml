@@ -8,4 +8,6 @@
     <color name="colorMaterialGreen">#76FF03</color>
     <color name="colorMaterialLightYellow">#FFFF00</color>
     <color name="colorMaterialOrange">#FFB300</color>
+    <color name="colorOpaqueGrey">#809E9E9E</color>
+    <color name="colorAbsoluteWhite">#FFFFFF</color>
 </resources>

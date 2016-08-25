@@ -2,7 +2,6 @@ package com.example.hikernotes.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,11 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.hikernotes.R;
 import com.example.hikernotes.realms.Tour;
 import com.example.hikernotes.activities.DetailsActivity;
@@ -34,7 +28,8 @@ import io.realm.Sort;
 public class MainRecyclerListAdapter extends RecyclerView.Adapter<MainRecyclerListAdapter.MyViewHolder> {
     private RealmList<Tour> tours;
     private Context mContext;
-    private int thumb_size_in_px = 1;
+    private int thumb_height_in_px = 1;
+    private int thumb_width_in_px = 1;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public ImageView mImageView;
@@ -85,11 +80,14 @@ public class MainRecyclerListAdapter extends RecyclerView.Adapter<MainRecyclerLi
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         mContext = parent.getContext();
-        View list_row = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_main_list, parent, false);
-        list_row.setBackgroundColor(mContext.getResources().getColor(R.color.colorMaterialOrange));
+        View list_row = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_row_main_list, parent, false);
+        //list_row.setBackgroundColor(mContext.getResources().getColor(R.color.colorMaterialOrange));
 
-        if (thumb_size_in_px == 1) {
-            thumb_size_in_px = (int) MeasureUnitConversionUtils.convertDpToPixel(180.0f, mContext);
+        if (thumb_height_in_px == 1) {
+            thumb_height_in_px = (int) MeasureUnitConversionUtils.convertDpToPixel(180.0f, mContext);
+        }
+        if (thumb_width_in_px == 1) {
+            thumb_width_in_px = parent.getWidth();
         }
 
         return new MyViewHolder(list_row);
@@ -114,7 +112,7 @@ public class MainRecyclerListAdapter extends RecyclerView.Adapter<MainRecyclerLi
 
         String[] img_refs = tour.getImg_references_str().split("---");
 
-        Picasso.with(mContext).load(img_refs[0]).resize(thumb_size_in_px, thumb_size_in_px).centerCrop().into(holder.mImageView);
+        Picasso.with(mContext).load(img_refs[0]).resize(thumb_width_in_px, thumb_height_in_px).centerCrop().into(holder.mImageView);
 
     }
 

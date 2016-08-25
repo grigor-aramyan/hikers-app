@@ -35,4 +35,5 @@ dependencies {
     compile 'com.github.ParkSangGwon:TedPicker:v1.0.10'
     compile 'com.bignerdranch.android:simple-item-decoration:1.0.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.android.support:cardview-v7:23.0.0'
 }

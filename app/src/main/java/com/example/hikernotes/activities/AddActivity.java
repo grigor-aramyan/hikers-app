@@ -115,6 +115,17 @@ public class AddActivity extends AppCompatActivity {
         }
 
         mIntentOfLocationUpdateService = new Intent(this, LocationUpdateService.class);
+
+        if (null != savedInstanceState) {
+            String saved_refs_encoded = savedInstanceState.getString("image-refs", "");
+            if (!saved_refs_encoded.isEmpty()) {
+                String[] saved_refs = saved_refs_encoded.split(":::");
+                for (String s: saved_refs){
+                    mImage_uris.add(Uri.parse(s));
+                }
+                setImageViewsSrc();
+            }
+        }
     }
 
     private void setImageViewsSrc() {
@@ -542,5 +553,17 @@ public class AddActivity extends AppCompatActivity {
             InputMethodManager imm = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(activity.getWindow().getDecorView().getWindowToken(), 0);
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        String refs_encoded = "";
+        for (Uri uri: mImage_uris) {
+            refs_encoded += uri.toString() + ":::";
+        }
+
+        outState.putString("image-refs", refs_encoded);
+
+        super.onSaveInstanceState(outState);
     }
 }

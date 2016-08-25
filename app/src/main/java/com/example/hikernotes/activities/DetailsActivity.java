@@ -29,7 +29,6 @@ import com.example.hikernotes.MainActivity;
 import com.example.hikernotes.MapsActivity;
 import com.example.hikernotes.R;
 import com.example.hikernotes.realms.Tour;
-import com.example.hikernotes.cache.LruBitmapCache;
 import com.example.hikernotes.realms.SavedTrail;
 import com.example.hikernotes.utils.MeasureUnitConversionUtils;
 import com.example.hikernotes.widgets.AddCommentBlock;
@@ -53,7 +52,7 @@ import io.realm.RealmResults;
 public class DetailsActivity extends AppCompatActivity {
     private TextView title_txt, date_txt, author_txt, info_txt, likes_txt;
     private ImageView map_image, image_one, image_two, image_tree, image_four, image_five;
-    private Button save_trail_btn, delete_trail_btn, show_comments_btn, add_comment_btn;
+    private Button save_trail_btn, delete_trail_btn;
     private ImageView upvote_img_btn, downvote_img_btn;
     private Realm mRealm;
     private RequestQueue mRequestQueue;
@@ -112,9 +111,6 @@ public class DetailsActivity extends AppCompatActivity {
             delete_trail_btn.setVisibility(View.VISIBLE);
         }
 
-        int flag_open_comments = getIntent().getIntExtra("flag-comments", 1);
-        if (flag_open_comments == 11)
-            mShowCommentsBlock.setVisibility(View.VISIBLE);
     }
 
     private void initViews() {
@@ -143,11 +139,6 @@ public class DetailsActivity extends AppCompatActivity {
         delete_trail_btn = (Button) findViewById(R.id.delete_trail_btn_id);
         delete_trail_btn.setOnClickListener(mClickListener);
 
-        show_comments_btn = (Button) findViewById(R.id.show_comments_btn_id);
-        show_comments_btn.setOnClickListener(mClickListener);
-        add_comment_btn = (Button) findViewById(R.id.add_comment_btn_id);
-        add_comment_btn.setOnClickListener(mClickListener);
-
         upvote_img_btn = (ImageView) findViewById(R.id.upvote_btn_id);
         upvote_img_btn.setOnClickListener(mClickListener);
         downvote_img_btn = (ImageView) findViewById(R.id.downvote_btn_id);
@@ -174,12 +165,6 @@ public class DetailsActivity extends AppCompatActivity {
                         Intent intent1 = new Intent(getApplicationContext(), DetailsActivity.class);
                         intent1.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent1);
-                        break;
-                    case R.id.add_comment_btn_id:
-                        mAddCommentBlock.setVisibility((mAddCommentBlock.getVisibility() == View.GONE)?View.VISIBLE:View.GONE);
-                        break;
-                    case R.id.show_comments_btn_id:
-                        mShowCommentsBlock.setVisibility((mShowCommentsBlock.getVisibility() == View.GONE)?View.VISIBLE:View.GONE);
                         break;
                     case R.id.save_trail_btn_id:
                         mRealm.beginTransaction();
