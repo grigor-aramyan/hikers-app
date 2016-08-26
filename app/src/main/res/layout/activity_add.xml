@@ -43,11 +43,18 @@
                 android:layout_height="160dp"
                 android:id="@+id/tour_imgs_id"
                 android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="160dp"
+                    android:layout_height="160dp"
+                    android:id="@+id/imgage_plus"
+                    android:src="@drawable/add_button"
+                    android:layout_marginRight="8dp"/>
+
                 <ImageView
                     android:layout_width="160dp"
                     android:layout_height="160dp"
                     android:id="@+id/img_1_id"
-                    android:src="@drawable/add_button"
                     android:layout_marginRight="8dp"/>
                 <ImageView
                     android:layout_marginRight="8dp"

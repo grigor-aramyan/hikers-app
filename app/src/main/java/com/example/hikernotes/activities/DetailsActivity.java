@@ -6,9 +6,16 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -63,6 +70,10 @@ public class DetailsActivity extends AppCompatActivity {
     private ShowCommentsBlock mShowCommentsBlock;
     private ArrayList<ImageView> mImagesForTour = new ArrayList<>();
 
+    private ViewPager mPreviewViewPager;
+    private String[] mImg_refs;
+    private MyFragmentPagerAdapter mPagerAdapter;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,13 +108,19 @@ public class DetailsActivity extends AppCompatActivity {
 
             int image_size_in_px = (int) MeasureUnitConversionUtils.convertDpToPixel(150.0f, this);
 
-            String[] img_refs = tour.getImg_references_str().split("---");
+            mImg_refs = tour.getImg_references_str().split("---");
 
-            for (int i = 0; i < img_refs.length; i++) {
-                Picasso.with(this).load(img_refs[i]).resize(image_size_in_px, image_size_in_px).centerCrop().into(mImagesForTour.get(i));
+            for (int i = 0; i < mImg_refs.length; i++) {
+                Picasso.with(this).load(mImg_refs[i]).resize(image_size_in_px, image_size_in_px).centerCrop().into(mImagesForTour.get(i));
             }
 
         }
+
+        mPreviewViewPager = (ViewPager) findViewById(R.id.img_preview_holder);
+        mPagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager());
+        mPreviewViewPager.setOffscreenPageLimit(mImg_refs.length);
+        mPreviewViewPager.setAdapter(mPagerAdapter);
+
 
         RealmResults realmResults1 = mRealm.where(SavedTrail.class).equalTo("id", mSelectedTourID).findAll();
         if (realmResults1.size() > 0) {
@@ -127,6 +144,29 @@ public class DetailsActivity extends AppCompatActivity {
         image_tree = (ImageView) findViewById(R.id.img_3_id);
         image_four = (ImageView) findViewById(R.id.img_4_id);
         image_five = (ImageView) findViewById(R.id.img_5_id);
+
+        // avelacnel stugum nkarneri clickneri vra
+
+        image_one.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Log.e("mmm","1 image onClick");
+                mPreviewViewPager.setVisibility(View.VISIBLE);
+                mPreviewViewPager.setCurrentItem(0,false);
+            }
+        });
+
+        image_two.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.e("mmm","2 image onClick");
+                mPreviewViewPager.setVisibility(View.VISIBLE);
+                mPreviewViewPager.setCurrentItem(1,false);
+            }
+        });
+
+
 
         mImagesForTour.add(image_one);
         mImagesForTour.add(image_two);
@@ -303,4 +343,69 @@ public class DetailsActivity extends AppCompatActivity {
             imm.hideSoftInputFromWindow(activity.getWindow().getDecorView().getWindowToken(), 0);
         }
     }
+
+
+
+
+    public static class PageFragment extends Fragment {
+        static final String ARGUMENT_PAGE_NUMBER = "arg_page_number";
+        static final String ARGUMENT_IMAGE_PATH = "argument_image_path";
+        int pageNumber;
+        private ImageView mImageHolder;
+        private String mImagePath;
+
+        static PageFragment newInstance(int page, String imagePath) {
+            PageFragment pageFragment = new PageFragment();
+            Bundle arguments = new Bundle();
+            arguments.putInt(ARGUMENT_PAGE_NUMBER, page);
+            arguments.putString(ARGUMENT_IMAGE_PATH, imagePath);
+            pageFragment.setArguments(arguments);
+            return pageFragment;
+        }
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            pageNumber = getArguments().getInt(ARGUMENT_PAGE_NUMBER);
+            mImagePath = getArguments().getString(ARGUMENT_IMAGE_PATH);
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            View view = inflater.inflate(R.layout.fragment, null);
+            mImageHolder = (ImageView) view.findViewById(R.id.preview_image_holder);
+            Picasso.with(getActivity()).load(mImagePath).into(mImageHolder);
+            return view;
+        }
+    }
+
+    private class MyFragmentPagerAdapter extends FragmentPagerAdapter {
+
+        public MyFragmentPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return PageFragment.newInstance(position, mImg_refs[position]);
+        }
+
+        @Override
+        public int getCount() {
+            return mImg_refs.length;
+        }
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mPreviewViewPager.getVisibility() == View.VISIBLE) {
+            mPreviewViewPager.setVisibility(View.GONE);
+            return;
+        }
+
+        super.onBackPressed();
+    }
+
+
 }

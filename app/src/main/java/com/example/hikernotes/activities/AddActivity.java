@@ -1,18 +1,22 @@
 package com.example.hikernotes.activities;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -50,6 +54,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -57,10 +62,9 @@ import java.util.Date;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
-/**
- * Created by John on 8/16/2016.
- */
+
 public class AddActivity extends AppCompatActivity {
+
     private static final int INTENT_REQUEST_GET_IMAGES = 13;
     private final int IMAGES_MAX_QNTY = 5;
     private Intent mIntentOfLocationUpdateService;
@@ -68,13 +72,18 @@ public class AddActivity extends AppCompatActivity {
     private View.OnLongClickListener mLongClickListener;
     private UploadStatusDelegate mUploadStatusDelegate;
     private EditText author_edt, title_edt, info_edt;
-    private ImageView map_img, tour_img_one, tour_img_two, tour_img_tree, tour_img_four, tour_img_five;
+    private ImageView map_img, tour_img_one, tour_img_two, tour_img_tree, tour_img_four, tour_img_five, image_plus, mImg;
     private Button save_btn, upload_btn, clear_btn;
     private ArrayList<Uri> mImage_uris = new ArrayList<>();
     private ArrayList<ImageView> tour_images = new ArrayList<>();
     private Realm mRealm;
     private RequestQueue mRequestQueue;
     private int mImageSizeInPx;
+    private static final int SELECT_PICTURE = 100;
+    private int i = 0;
+    private ArrayList<Uri> mImageUris  ;
+    private final int IDD_LIST_CATS = 1;
+    int size = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -83,6 +92,13 @@ public class AddActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+
+        mImageUris = new ArrayList<>();
+        for(int j= 0;j<5;j++){
+            mImageUris.add(j,null);
+        }
+
 
         mRealm = Realm.getDefaultInstance();
         mRequestQueue = Volley.newRequestQueue(this);
@@ -127,6 +143,7 @@ public class AddActivity extends AppCompatActivity {
     }
 
     private void setImageViewsSrc() {
+
         int uri_qnt = mImage_uris.size();
         if (uri_qnt == 0)
             return;
@@ -163,32 +180,56 @@ public class AddActivity extends AppCompatActivity {
     }
 
     private void initViews() {
+
         author_edt = (EditText) findViewById(R.id.author_txt_id);
         title_edt = (EditText) findViewById(R.id.title_txt_id);
         info_edt = (EditText) findViewById(R.id.tour_info_txt_id);
 
         map_img = (ImageView) findViewById(R.id.map_img_id);
         map_img.setOnClickListener(mClickListener);
+
+
+
+        image_plus = (ImageView) findViewById(R.id.imgage_plus) ;
+        image_plus.setOnClickListener(mClickListener);
+
+
         tour_img_one = (ImageView) findViewById(R.id.img_1_id);
-        tour_img_one.setOnClickListener(mClickListener);
+        // tour_img_one.setOnClickListener(mClickListener);
         tour_img_one.setOnLongClickListener(mLongClickListener);
+        tour_img_one.setVisibility(View.GONE);
         tour_images.add(tour_img_one);
+
         tour_img_two = (ImageView) findViewById(R.id.img_2_id);
         //tour_img_two.setOnClickListener(mClickListener);
         tour_img_two.setOnLongClickListener(mLongClickListener);
+        tour_img_two.setVisibility(View.GONE);
+
         tour_images.add(tour_img_two);
+
+
         tour_img_tree = (ImageView) findViewById(R.id.img_3_id);
         //tour_img_tree.setOnClickListener(mClickListener);
         tour_img_tree.setOnLongClickListener(mLongClickListener);
+        tour_img_tree.setVisibility(View.GONE);
         tour_images.add(tour_img_tree);
+
         tour_img_four = (ImageView) findViewById(R.id.img_4_id);
         //tour_img_four.setOnClickListener(mClickListener);
         tour_img_four.setOnLongClickListener(mLongClickListener);
+        tour_img_four.setVisibility(View.GONE);
         tour_images.add(tour_img_four);
+
         tour_img_five = (ImageView) findViewById(R.id.img_5_id);
+
         //tour_img_five.setOnClickListener(mClickListener);
         tour_img_five.setOnLongClickListener(mLongClickListener);
+        tour_img_five.setVisibility(View.GONE);
         tour_images.add(tour_img_five);
+
+
+
+
 
         save_btn = (Button) findViewById(R.id.save_tour_btn_id);
         save_btn.setOnClickListener(mClickListener);
@@ -383,13 +424,61 @@ public class AddActivity extends AppCompatActivity {
                         intent.putExtra("trail", current_trail);
                         startActivity(intent);
                         break;
-                    case R.id.img_1_id:
+
+
+                    case R.id.imgage_plus:
+
+
+                        switch (i) {
+                            case 0:
+                                mImg = tour_img_one;
+                                openImageChooser();
+
+                                break;
+
+                            case 1:
+                                mImg = tour_img_two;
+                                openImageChooser();
+
+                                break;
+
+                            case 2:
+                                mImg = tour_img_tree;
+                                openImageChooser();
+
+                                break;
+
+                            case 3:
+                                mImg = tour_img_four;
+                                openImageChooser();
+
+                                break;
+
+                            case 4:
+
+                                mImg = tour_img_five;
+                                openImageChooser();
+
+
+
+                                break;
+                        }
+
+
+
+
+
+
+
+
+
+                    /*case R.id.img_1_id:
                     case R.id.img_2_id:
                     case R.id.img_3_id:
                     case R.id.img_4_id:
-                    case R.id.img_5_id:
-                        getImages();
-                        break;
+                    case R.id.img_5_id:*/
+                        //  getImages();
+                        // break;
 
                     default:
                         break;
@@ -397,11 +486,51 @@ public class AddActivity extends AppCompatActivity {
             }
         };
 
+
         mLongClickListener = new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 switch (v.getId()) {
+
                     case R.id.img_1_id:
+
+                        i = 0;
+                        mImg = tour_img_one;
+                        showDialog(IDD_LIST_CATS);
+                        break;
+
+                    case R.id.img_2_id:
+
+                        i = 1;
+                        mImg = tour_img_two;
+                        showDialog(IDD_LIST_CATS);
+                        break;
+
+                    case R.id.img_3_id:
+
+                        i = 2;
+                        mImg = tour_img_tree;
+                        showDialog(IDD_LIST_CATS);
+                        break;
+
+                    case R.id.img_4_id:
+
+                        i = 3;
+                        mImg = tour_img_four;
+                        showDialog(IDD_LIST_CATS);
+                        break;
+
+                    case R.id.img_5_id:
+
+                        i = 4;
+                        mImg = tour_img_five;
+                        showDialog(IDD_LIST_CATS);
+                        break;
+
+
+
+                  /*  case R.id.img_1_id:
+
                         if (mImage_uris.size() == 0)
                             return true;
                         mImage_uris.remove(0);
@@ -430,10 +559,12 @@ public class AddActivity extends AppCompatActivity {
                             return true;
                         mImage_uris.remove(4);
                         setImageViewsSrc();
-                        return true;
+                       ;*/
+
                     default:
                         return false;
                 }
+                return true;
             }
         };
 
@@ -459,6 +590,16 @@ public class AddActivity extends AppCompatActivity {
             }
         };
     }
+
+
+
+    void openImageChooser() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_PICTURE);
+    }
+
 
     private void clearLocationsSharedPref() {
         SharedPreferences sharedPreferences = getSharedPreferences(LocationUpdateService.sSharedPrefForFixedLocations, MODE_PRIVATE);
@@ -506,6 +647,59 @@ public class AddActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
+            if (requestCode == SELECT_PICTURE) {
+                // Get the url from data
+                Uri selectedImageUri = data.getData();
+                if (null != selectedImageUri) {
+                    // Get the path from the Uri
+                    String path = getPathFromURI(selectedImageUri);
+                    //Log.i(TAG, "Image Path : " + path);
+                    // Set the image in ImageView
+
+
+                    Uri imageUri = data.getData();
+                    Bitmap scaledBitmap = null;
+                    try {
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
+                        scaledBitmap = Bitmap.createScaledBitmap(bitmap, 200, 200, false);
+                        bitmap.recycle();
+
+                        // get thumbnial from storage android
+
+                    } catch (IOException pE) {
+                        pE.printStackTrace();
+                    }
+
+
+                    if (scaledBitmap != null) {
+
+                        mImg.setImageBitmap(scaledBitmap);
+                        mImg.setVisibility(View.VISIBLE);
+
+                        System.out.print(" mImageUris in = " + i);
+                        mImageUris.set(i, selectedImageUri);
+                        size ++;
+                        i++;
+                    }
+
+
+
+
+                }
+
+
+                    if (size == 5) {
+                        image_plus.setVisibility(View.GONE);}
+                    else{
+                        image_plus.setVisibility(View.VISIBLE);
+                    }
+
+
+            }
+
+
+
+
             switch (requestCode) {
                 case LocationUpdateService.REQUEST_CODE_FOR_RESOLUTION_REQUEST:
                     Toast.makeText(this, "If you enabled settings, try to start tracking again!!", Toast.LENGTH_LONG).show();
@@ -519,6 +713,68 @@ public class AddActivity extends AppCompatActivity {
             }
         }
     }
+
+    @Override
+    public Dialog onCreateDialog(int id) {
+        switch (id) {
+            case IDD_LIST_CATS:
+
+                final String[] mTables ={"insert", "delete", "cencel"};
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("mi ban yntri "); // заголовок для диалога
+
+                builder.setItems(mTables, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int item) {
+
+                     /*   Toast.makeText(getApplicationContext(),
+                                "yntrel es : " + mTables[item]+"i = "+ item,
+                                Toast.LENGTH_SHORT).show();*/
+
+
+                        switch (item) {
+                            case 0:
+                                size--;
+                                openImageChooser();
+                                break;
+
+                            case 1:
+                                size--;
+                                mImg.setVisibility(View.GONE);
+                                image_plus.setVisibility(View.VISIBLE);
+                                mImageUris.set(i,null);
+
+                                break;
+
+                            case 2:
+
+                                break;
+
+                        }
+                    }
+                });
+
+                builder.setCancelable(false);
+                return builder.create();
+
+            default:
+                return null;
+        }
+    }
+
+    public String getPathFromURI(Uri contentUri) {
+        String res = null;
+        String[] proj = {MediaStore.Images.Media.DATA};
+        Cursor cursor = getContentResolver().query(contentUri, proj, null, null, null);
+        if (cursor.moveToFirst()) {
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            res = cursor.getString(column_index);
+        }
+        cursor.close();
+        return res;
+    }
+
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
