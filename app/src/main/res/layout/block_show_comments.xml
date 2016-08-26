@@ -15,7 +15,6 @@
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="150dp"
         android:scrollbars="vertical"
         android:id="@+id/comments_list" />
 

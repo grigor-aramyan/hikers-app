@@ -1,11 +1,13 @@
 package com.example.hikernotes;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.SubMenu;
@@ -14,7 +16,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.ToxicBakery.viewpager.transforms.CubeOutTransformer;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -23,10 +24,11 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.hikernotes.activities.AddActivity;
-import com.example.hikernotes.adapters.MyPagerAdapter;
+import com.example.hikernotes.adapters.MainRecyclerListAdapter;
 import com.example.hikernotes.realms.CurrentTour;
 import com.example.hikernotes.realms.SavedTrail;
 import com.example.hikernotes.realms.Tour;
+import com.example.hikernotes.utils.EndlessRecyclerViewScrollListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,10 +36,11 @@ import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 
 import io.realm.Realm;
+import io.realm.RealmList;
 import io.realm.RealmResults;
+import io.realm.Sort;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -50,10 +53,15 @@ public class MainActivity extends AppCompatActivity {
     public static String sUrlForNewComment = "http://hikingapp.net23.net/addnewcomment.php";
     public static String sUrlForPullingComments = "http://hikingapp.net23.net/pullcomments.php";
 
-    private ViewPager mViewPager;
+    //private ViewPager mViewPager;
     private RequestQueue mQueue;
     private Realm mRealm;
-    private MyPagerAdapter adapter;
+    //private MyPagerAdapter adapter;
+    private RecyclerView mRecyclerView;
+    private MainRecyclerListAdapter mListAdapter;
+    private RealmList<Tour> mToursList;
+    private int SORT_FLAG = 1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,11 +89,61 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        mViewPager = (ViewPager) findViewById(R.id.pager_main);
-        mViewPager.setPageTransformer(false, new CubeOutTransformer());
+        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_list);
 
-        adapter = new MyPagerAdapter(getSupportFragmentManager());
-        mViewPager.setAdapter(adapter);
+        mToursList = new RealmList<>();
+        SharedPreferences sharedPreferences = getSharedPreferences("sort_type", Context.MODE_PRIVATE);
+        SORT_FLAG = sharedPreferences.getInt("sort_by", 1);
+
+        mListAdapter = new MainRecyclerListAdapter(mToursList);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.addOnScrollListener(new EndlessRecyclerViewScrollListener(layoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount) {
+                loadMore(page);
+            }
+        });
+
+        mRecyclerView.setAdapter(mListAdapter);
+        getTours(mToursList, 0, SORT_FLAG);
+    }
+
+    void loadMore(int page) {
+        if (page == 0) {
+            mToursList.clear();
+        }
+
+        getTours(mToursList, page, SORT_FLAG);
+        mListAdapter.notifyDataSetChanged();
+
+    }
+
+    void getTours(RealmList<Tour> tours, int page_number, int sort_flag) {
+        int start_index = page_number * 10;
+        int end_index = start_index + 9;
+
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<Tour> realmResults = realm.where(Tour.class).findAll();
+        switch (sort_flag) {
+            case 1:
+                realmResults.sort("date", Sort.DESCENDING);
+                break;
+            case 2:
+                realmResults.sort("likes", Sort.DESCENDING);
+                break;
+            default:
+                break;
+        }
+
+        int realm_results_last_index = realmResults.size() - 1;
+        if (end_index > realm_results_last_index)
+            end_index = realm_results_last_index;
+
+        for (int i = start_index; i <= end_index; i++) {
+            tours.add(realmResults.get(i));
+        }
+
     }
 
     @Override
@@ -255,7 +313,7 @@ public class MainActivity extends AppCompatActivity {
         mQueue.add(jsonArrayRequest);
     }
 
-    @Override
+    /*@Override
     public void onBackPressed() {
         if (mViewPager == null || mViewPager.getCurrentItem() == 0) {
             // If the user is currently looking at the first step, allow the system to handle the
@@ -265,5 +323,5 @@ public class MainActivity extends AppCompatActivity {
             // Otherwise, select the previous step.
             mViewPager.setCurrentItem(mViewPager.getCurrentItem() - 1);
         }
-    }
+    }*/
 }

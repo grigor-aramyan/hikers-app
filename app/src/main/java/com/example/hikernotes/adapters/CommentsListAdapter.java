@@ -43,12 +43,11 @@ public class CommentsListAdapter extends RecyclerView.Adapter<CommentsListAdapte
         }
     }
 
-    public CommentsListAdapter(final int tour_id, final Context context) {
-        mQueue = Volley.newRequestQueue(context);
-        authors = new ArrayList<>();
-        comments = new ArrayList<>();
+    public CommentsListAdapter(ArrayList<String> authors, ArrayList<String> comments, final Context context) {
+        this.authors = authors;
+        this.comments = comments;
 
-        StringRequest request = new StringRequest(Request.Method.POST, MainActivity.sUrlForConnectivityCheck, new Response.Listener<String>() {
+        /*StringRequest request = new StringRequest(Request.Method.POST, MainActivity.sUrlForConnectivityCheck, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 if (response.startsWith("got it")) {
@@ -99,7 +98,7 @@ public class CommentsListAdapter extends RecyclerView.Adapter<CommentsListAdapte
                 Toast.makeText(context, "Check your net access, please!!", Toast.LENGTH_LONG).show();
             }
         });
-        mQueue.add(request);
+        mQueue.add(request);*/
     }
 
     @Override
@@ -113,10 +112,13 @@ public class CommentsListAdapter extends RecyclerView.Adapter<CommentsListAdapte
         int real_position = comments.size() - position - 1;
         holder.name_txt.setText(authors.get(real_position));
         holder.comment_txt.setText(comments.get(real_position));
+
+
     }
 
     @Override
     public int getItemCount() {
         return comments.size();
     }
+
 }
