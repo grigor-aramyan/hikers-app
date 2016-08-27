@@ -21,7 +21,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,7 +31,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.hikernotes.MainActivity;
 import com.example.hikernotes.MapsActivity;
 import com.example.hikernotes.R;
 import com.example.hikernotes.consumptions.VolleyRequests;
@@ -142,18 +140,32 @@ public class DetailsActivity extends AppCompatActivity {
             case android.R.id.home:
                 finish();
                 return true;
-            case R.id.action_save_trial:
+            case R.id.action_save_trail:
                 mRealm.beginTransaction();
                 SavedTrail savedTrail = new SavedTrail(mSelectedTourID, mTitle, mTrail);
                 mRealm.copyToRealmOrUpdate(savedTrail);
                 mRealm.commitTransaction();
                 Toast.makeText(getApplication(), "Trail saved", Toast.LENGTH_LONG).show();
+
               return true;
 
             case R.id.action_map:
                 Intent intent = new Intent(getApplication(), MapsActivity.class);
                 intent.putExtra("trail", mTrail);
                 startActivity(intent);
+                return true;
+            case R.id.action_delete_trail:
+                final RealmResults realmResults = mRealm.where(SavedTrail.class).equalTo("id", mSelectedTourID).findAll();
+                mRealm.executeTransaction(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        realmResults.clear();
+                    }
+                });
+                Intent intent1 = new Intent(getApplicationContext(), DetailsActivity.class);
+                intent1.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent1);
+                Toast.makeText(getApplication(), "Trail deleted", Toast.LENGTH_LONG).show();
                 return true;
 
             default:
@@ -261,18 +273,7 @@ public class DetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 switch (v.getId()){
-                  /*  case R.id.delete_trail_btn_id:
-                        final RealmResults realmResults = mRealm.where(SavedTrail.class).equalTo("id", mSelectedTourID).findAll();
-                        mRealm.executeTransaction(new Realm.Transaction() {
-                            @Override
-                            public void execute(Realm realm) {
-                                realmResults.clear();
-                            }
-                        });
-                        Intent intent1 = new Intent(getApplicationContext(), DetailsActivity.class);
-                        intent1.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent1);
-                        break;
+                  /*
 */
 
                     case R.id.upvote_btn_id:

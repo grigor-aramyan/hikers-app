@@ -3,15 +3,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
         <item
+
             android:id="@+id/action_map"
-            android:icon="@drawable/menu_map_image"
+            android:icon="@drawable/map_icon"
             android:title="@string/show_map_res"
             app:showAsAction="always"/>
 
-        <item android:id="@+id/action_save_trial"
+        <item android:id="@+id/action_save_trail"
             android:icon="@drawable/save_trial_menu_item"
             android:title="@string/save_trail_res"
             app:showAsAction="ifRoom"/>
+
+        <item android:id="@+id/action_delete_trail"
+            android:icon="@drawable/delete"
+            android:title="@string/delete_trail_rsc"
+            app:showAsAction="ifRoom"
+           />
 
 
 </menu>

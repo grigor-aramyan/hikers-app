@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:title="@string/start_tracking_rsc"
         android:id="@+id/start_tracking_id" />
 
     <item android:title="@string/stop_tracking_rsc"
         android:id="@+id/stop_tracking_id" />
+
+    <item
+
+        android:id="@+id/map_img_id"
+        android:icon="@drawable/map_icon"
+        android:title="@string/show_map_res"
+        app:showAsAction="always"/>
+
 </menu>

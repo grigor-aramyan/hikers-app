@@ -4,12 +4,17 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+   >>
 
 
 
     <ScrollView android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin">
 
 
     <LinearLayout
@@ -99,7 +104,7 @@
                 android:layout_width="76dp"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
-                android:layout_weight="0.17">
+                android:layout_weight="0.29">
 
                 <ImageView
 
@@ -138,29 +143,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="50dp"
-            android:background="@color/colorAccent"
+
             android:id="@+id/tour_info_txt_id"
             android:text="some memos from tour"/>
 
-      <!-- <LinearLayout
 
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:minHeight="75dp">
-
-
-
-            <Button
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:id="@+id/delete_trail_btn_id"
-                android:text="@string/delete_trail_rsc"
-                android:visibility="gone"/>
-        </LinearLayout>-->
     </LinearLayout>
 
     <LinearLayout

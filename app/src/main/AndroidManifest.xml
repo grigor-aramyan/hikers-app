@@ -35,8 +35,9 @@
             android:name=".activities.AddActivity"
             android:label="@string/add_tour_rsc"
             android:windowSoftInputMode="stateUnchanged"/>
-        <activity android:name=".activities.EmptyActivity"
-                  android:label="@string/no_data_rsc"/>
+        <activity
+            android:name=".activities.EmptyActivity"
+            android:label="@string/no_data_rsc"/>
 
         <!--activity android:name="com.gun0912.tedpicker.ImagePickerActivity"
                   android:screenOrientation="portrait"
