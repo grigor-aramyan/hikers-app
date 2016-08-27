@@ -241,6 +241,8 @@ public class MainActivity extends AppCompatActivity {
                     updateLocalDBAndPopulateList();
                 } else if (!mIsLocalDBEmpty) {
                     Toast.makeText(getApplicationContext(), "Data is from local DB", Toast.LENGTH_LONG).show();
+                    mProgressBarLayout.setVisibility(View.GONE);
+                    mRecyclerView.setVisibility(View.VISIBLE);
                     populateToursRecyclerView();
                 } else {
                     Intent intent = new Intent(getApplicationContext(), EmptyActivity.class);
@@ -253,6 +255,8 @@ public class MainActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 if (!mIsLocalDBEmpty) {
                     Toast.makeText(getApplicationContext(), "Data is from local DB", Toast.LENGTH_LONG).show();
+                    mProgressBarLayout.setVisibility(View.GONE);
+                    mRecyclerView.setVisibility(View.VISIBLE);
                     populateToursRecyclerView();
                 } else {
                     Intent intent = new Intent(getApplicationContext(), EmptyActivity.class);

@@ -340,7 +340,7 @@ public class AddActivity extends AppCompatActivity {
                                         Toast.makeText(getApplication(), "No fixed locations, those trail for this tour. Can't upload w/o it!!", Toast.LENGTH_LONG).show();
                                         return;
                                     }
-                                    if (mImage_uris.size() != 5) {
+                                    if (size != 5) {
                                         Toast.makeText(getApplication(), "We need exactly 5 images to make an upload. Add some, please!", Toast.LENGTH_LONG).show();
                                         return;
                                     }
@@ -359,12 +359,16 @@ public class AddActivity extends AppCompatActivity {
                                                 if (response.getString("result").equals("ok")) {
                                                     int new_tour_id = response.getInt("lastid");
 
-                                                    for (Uri uri: mImage_uris) {
+                                                    for (int i = 0; i < mImageUris.size(); i++) {
+                                                        if (null == mImageUris.get(i))
+                                                            continue;
+                                                        String imagePath = getPathFromURI(mImageUris.get(i));
+                                                        //Log.e("nnn", uri.toString());
                                                         MultipartUploadRequest request = new MultipartUploadRequest(getApplication(), VolleyRequests.sUrlForImageUploads)
                                                                 .setAutoDeleteFilesAfterSuccessfulUpload(false)
                                                                 .setMaxRetries(3)
                                                                 .addParameter("tourid", new_tour_id + "")
-                                                                .addFileToUpload(uri.toString(), "myimage");
+                                                                .addFileToUpload(imagePath, "myimage");
                                                         request.setDelegate(mUploadStatusDelegate).startUpload();
                                                     }
 
@@ -638,8 +642,8 @@ public class AddActivity extends AppCompatActivity {
                 Uri selectedImageUri = data.getData();
                 if (null != selectedImageUri) {
                     // Get the path from the Uri
-                    String path = getPathFromURI(selectedImageUri);
-                    //Log.i(TAG, "Image Path : " + path);
+                    //String path = getPathFromURI(selectedImageUri);
+                    //Log.e("mmm", "Image Path : " + path);
                     // Set the image in ImageView
 
 
