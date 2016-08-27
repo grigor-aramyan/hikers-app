@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -24,39 +27,39 @@
 
             <HorizontalScrollView
                 android:layout_width="match_parent"
-                android:layout_height="150dp">
+                android:layout_height="200dp">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:id="@+id/tour_imgs_id"
                     android:orientation="horizontal">
                     <ImageView
-                        android:layout_width="150dp"
+                        android:layout_width="200dp"
                         android:layout_height="match_parent"
                         android:id="@+id/img_1_id"
                         android:src="@mipmap/ic_launcher"
                         android:layout_marginRight="8dp"/>
                     <ImageView
                         android:layout_marginRight="8dp"
-                        android:layout_width="150dp"
+                        android:layout_width="200dp"
                         android:layout_height="match_parent"
                         android:id="@+id/img_2_id"
                         android:src="@mipmap/ic_launcher"/>
                     <ImageView
-                        android:layout_marginRight="8dp"
-                        android:layout_width="150dp"
+                        android:layout_marginRight="4dp"
+                        android:layout_width="200dp"
                         android:layout_height="match_parent"
                         android:id="@+id/img_3_id"
                         android:src="@mipmap/ic_launcher"/>
                     <ImageView
-                        android:layout_marginRight="8dp"
-                        android:layout_width="150dp"
+                        android:layout_marginRight="4dp"
+                        android:layout_width="200dp"
                         android:layout_height="match_parent"
                         android:id="@+id/img_4_id"
                         android:src="@mipmap/ic_launcher"/>
                     <ImageView
-                        android:layout_marginRight="8dp"
-                        android:layout_width="150dp"
+                        android:layout_marginRight="4dp"
+                        android:layout_width="200dp"
                         android:layout_height="match_parent"
                         android:id="@+id/img_5_id"
                         android:src="@mipmap/ic_launcher"/>
@@ -191,7 +194,7 @@
         android:id="@+id/img_preview_holder"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#319568"
+        android:background="#000000"
         android:visibility="gone"
         />
 

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:title="@string/start_tracking_rsc" android:id="@+id/start_tracking_id" />
-    <item android:title="@string/stop_tracking_rsc" android:id="@+id/stop_tracking_id" />
+    <item android:title="@string/start_tracking_rsc"
+        android:id="@+id/start_tracking_id" />
+
+    <item android:title="@string/stop_tracking_rsc"
+        android:id="@+id/stop_tracking_id" />
 </menu>

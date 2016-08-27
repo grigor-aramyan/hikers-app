@@ -3,7 +3,6 @@ package com.example.hikernotes.activities;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,6 +12,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,8 +30,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.hikernotes.MainActivity;
@@ -41,9 +41,6 @@ import com.example.hikernotes.utils.MeasureUnitConversionUtils;
 import com.example.hikernotes.widgets.AddCommentBlock;
 import com.example.hikernotes.widgets.ShowCommentsBlock;
 import com.squareup.picasso.Picasso;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -111,7 +108,8 @@ public class DetailsActivity extends AppCompatActivity {
             mImg_refs = tour.getImg_references_str().split("---");
 
             for (int i = 0; i < mImg_refs.length; i++) {
-                Picasso.with(this).load(mImg_refs[i]).resize(image_size_in_px, image_size_in_px).centerCrop().into(mImagesForTour.get(i));
+                Picasso.with(this).load(mImg_refs[i]).placeholder(R.drawable.loader)
+                        .error(R.drawable.noimageavailable).resize(image_size_in_px, image_size_in_px).centerCrop().into(mImagesForTour.get(i));
             }
 
         }
@@ -126,6 +124,36 @@ public class DetailsActivity extends AppCompatActivity {
         if (realmResults1.size() > 0) {
             save_trail_btn.setVisibility(View.GONE);
             delete_trail_btn.setVisibility(View.VISIBLE);
+        }
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_details_activity, menu);
+        return true;
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.action_save_trial:
+                mRealm.beginTransaction();
+                SavedTrail savedTrail = new SavedTrail(mSelectedTourID, mTitle, mTrail);
+                mRealm.copyToRealmOrUpdate(savedTrail);
+                mRealm.commitTransaction();
+                Toast.makeText(getApplication(), "Trail saved", Toast.LENGTH_LONG).show();
+              return true;
+
+            case R.id.action_map:
+                Intent intent = new Intent(getApplication(), MapsActivity.class);
+                intent.putExtra("trail", mTrail);
+                startActivity(intent);
+                return true;
+
+            default:
+                return false;
         }
 
     }
@@ -158,6 +186,33 @@ public class DetailsActivity extends AppCompatActivity {
         });
 
         image_two.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.e("mmm","2 image onClick");
+                mPreviewViewPager.setVisibility(View.VISIBLE);
+                mPreviewViewPager.setCurrentItem(1,false);
+            }
+        });
+
+        image_tree.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.e("mmm","2 image onClick");
+                mPreviewViewPager.setVisibility(View.VISIBLE);
+                mPreviewViewPager.setCurrentItem(1,false);
+            }
+        });
+
+        image_four.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.e("mmm","2 image onClick");
+                mPreviewViewPager.setVisibility(View.VISIBLE);
+                mPreviewViewPager.setCurrentItem(1,false);
+            }
+        });
+
+        image_five.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.e("mmm","2 image onClick");
@@ -207,12 +262,12 @@ public class DetailsActivity extends AppCompatActivity {
                         startActivity(intent1);
                         break;
                     case R.id.save_trail_btn_id:
-                        mRealm.beginTransaction();
+                       /* mRealm.beginTransaction();
                         SavedTrail savedTrail = new SavedTrail(mSelectedTourID, mTitle, mTrail);
 
                         mRealm.copyToRealmOrUpdate(savedTrail);
                         mRealm.commitTransaction();
-                        Toast.makeText(getApplication(), "Trail saved", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplication(), "Trail saved", Toast.LENGTH_LONG).show();*/
                         break;
                     case R.id.upvote_btn_id:
                         StringRequest stringRequest = new StringRequest(Request.Method.POST, MainActivity.sUrlForVoting, new Response.Listener<String>() {
@@ -308,9 +363,9 @@ public class DetailsActivity extends AppCompatActivity {
                         mRequestQueue.add(stringRequest1);
                         break;
                     case R.id.map_img_id:
-                        Intent intent = new Intent(getApplication(), MapsActivity.class);
+                       /* Intent intent = new Intent(getApplication(), MapsActivity.class);
                         intent.putExtra("trail", mTrail);
-                        startActivity(intent);
+                        startActivity(intent);*/
                     default:
                         break;
                 }
@@ -374,7 +429,8 @@ public class DetailsActivity extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View view = inflater.inflate(R.layout.fragment, null);
             mImageHolder = (ImageView) view.findViewById(R.id.preview_image_holder);
-            Picasso.with(getActivity()).load(mImagePath).into(mImageHolder);
+            Picasso.with(getActivity()).load(mImagePath).placeholder(R.drawable.loader)
+                    .error(R.drawable.noimageavailable).into(mImageHolder);
             return view;
         }
     }

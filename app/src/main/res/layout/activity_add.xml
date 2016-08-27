@@ -4,38 +4,13 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent">
 
-<LinearLayout
+    <LinearLayout
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="480dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="240dp"
-        android:orientation="vertical">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:orientation="horizontal">
-            <EditText
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:id="@+id/author_txt_id"
-                android:hint="Author: "/>
-            <EditText
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:id="@+id/title_txt_id"
-                android:hint="Title: "/>
-        </LinearLayout>
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:id="@+id/map_img_id"
-            android:src="@drawable/map_icon"/>
         <HorizontalScrollView
+            android:layout_marginTop="8dp"
             android:layout_width="match_parent"
             android:layout_height="160dp">
             <LinearLayout
@@ -78,6 +53,41 @@
                     android:id="@+id/img_5_id"/>
             </LinearLayout>
         </HorizontalScrollView>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="240dp"
+
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <EditText
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/author_txt_id"
+                android:hint="Author: "
+                />
+            <EditText
+
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/title_txt_id"
+                android:hint="Title: "/>
+        </LinearLayout>
+        <ImageView
+            android:layout_gravity="center"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:id="@+id/map_img_id"
+            android:src="@drawable/map_icon"/>
+
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -95,6 +105,7 @@
             android:layout_height="80dp"
             android:orientation="horizontal">
             <Button
+
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="match_parent"
