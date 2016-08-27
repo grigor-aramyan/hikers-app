@@ -145,12 +145,26 @@ public class DetailsActivity extends AppCompatActivity {
                 mRealm.copyToRealmOrUpdate(savedTrail);
                 mRealm.commitTransaction();
                 Toast.makeText(getApplication(), "Trail saved", Toast.LENGTH_LONG).show();
+
               return true;
 
             case R.id.action_map:
                 Intent intent = new Intent(getApplication(), MapsActivity.class);
                 intent.putExtra("trail", mTrail);
                 startActivity(intent);
+                return true;
+            case R.id.action_delete_trial:
+                final RealmResults realmResults = mRealm.where(SavedTrail.class).equalTo("id", mSelectedTourID).findAll();
+                mRealm.executeTransaction(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        realmResults.clear();
+                    }
+                });
+                Intent intent1 = new Intent(getApplicationContext(), DetailsActivity.class);
+                intent1.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent1);
+                Toast.makeText(getApplication(), "Trail deleted", Toast.LENGTH_LONG).show();
                 return true;
 
             default:
@@ -250,18 +264,7 @@ public class DetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 switch (v.getId()){
-                  /*  case R.id.delete_trail_btn_id:
-                        final RealmResults realmResults = mRealm.where(SavedTrail.class).equalTo("id", mSelectedTourID).findAll();
-                        mRealm.executeTransaction(new Realm.Transaction() {
-                            @Override
-                            public void execute(Realm realm) {
-                                realmResults.clear();
-                            }
-                        });
-                        Intent intent1 = new Intent(getApplicationContext(), DetailsActivity.class);
-                        intent1.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent1);
-                        break;
+                  /*
 */
                     case R.id.upvote_btn_id:
                         StringRequest stringRequest = new StringRequest(Request.Method.POST, VolleyRequests.sUrlForVoting, new Response.Listener<String>() {

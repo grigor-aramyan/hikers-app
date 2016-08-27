@@ -171,13 +171,7 @@ public class AddActivity extends AppCompatActivity {
             Toast.makeText(this, "Only 5 images allowed!! Delete some first by long clicking on them!!", Toast.LENGTH_LONG).show();
             return;
         }
-        /*Config config = new Config();
-        config.setSelectionLimit(selectionLimit);
 
-        ImagePickerActivity.setConfig(config);
-
-        Intent intent = new Intent(this, ImagePickerActivity.class);
-        startActivityForResult(intent, INTENT_REQUEST_GET_IMAGES);*/
     }
 
     private void initViews() {
@@ -186,51 +180,34 @@ public class AddActivity extends AppCompatActivity {
         title_edt = (EditText) findViewById(R.id.title_txt_id);
         info_edt = (EditText) findViewById(R.id.tour_info_txt_id);
 
-        map_img = (ImageView) findViewById(R.id.map_img_id);
-        map_img.setOnClickListener(mClickListener);
-
-
-
         image_plus = (ImageView) findViewById(R.id.imgage_plus) ;
         image_plus.setOnClickListener(mClickListener);
 
 
         tour_img_one = (ImageView) findViewById(R.id.img_1_id);
-        // tour_img_one.setOnClickListener(mClickListener);
         tour_img_one.setOnLongClickListener(mLongClickListener);
         tour_img_one.setVisibility(View.GONE);
         tour_images.add(tour_img_one);
 
         tour_img_two = (ImageView) findViewById(R.id.img_2_id);
-        //tour_img_two.setOnClickListener(mClickListener);
         tour_img_two.setOnLongClickListener(mLongClickListener);
         tour_img_two.setVisibility(View.GONE);
-
         tour_images.add(tour_img_two);
 
-
         tour_img_tree = (ImageView) findViewById(R.id.img_3_id);
-        //tour_img_tree.setOnClickListener(mClickListener);
         tour_img_tree.setOnLongClickListener(mLongClickListener);
         tour_img_tree.setVisibility(View.GONE);
         tour_images.add(tour_img_tree);
 
         tour_img_four = (ImageView) findViewById(R.id.img_4_id);
-        //tour_img_four.setOnClickListener(mClickListener);
         tour_img_four.setOnLongClickListener(mLongClickListener);
         tour_img_four.setVisibility(View.GONE);
         tour_images.add(tour_img_four);
 
         tour_img_five = (ImageView) findViewById(R.id.img_5_id);
-
-        //tour_img_five.setOnClickListener(mClickListener);
         tour_img_five.setOnLongClickListener(mLongClickListener);
         tour_img_five.setVisibility(View.GONE);
         tour_images.add(tour_img_five);
-
-
-
-
 
         save_btn = (Button) findViewById(R.id.save_tour_btn_id);
         save_btn.setOnClickListener(mClickListener);
@@ -418,19 +395,6 @@ public class AddActivity extends AppCompatActivity {
                         mRequestQueue.add(stringRequest);
                         break;
 
-                    case R.id.map_img_id:
-                        SharedPreferences sharedPreferences = getSharedPreferences(LocationUpdateService.sSharedPrefForFixedLocations, MODE_PRIVATE);
-                        String current_trail = sharedPreferences.getString("locations", "");
-                        if (current_trail.isEmpty()) {
-                            Toast.makeText(getApplication(), "No current trail to show!!", Toast.LENGTH_LONG).show();
-                            return;
-                        }
-                        Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
-                        intent.putExtra("trail", current_trail);
-                        startActivity(intent);
-                        break;
-
-
                     case R.id.imgage_plus:
 
 
@@ -517,40 +481,6 @@ public class AddActivity extends AppCompatActivity {
                         showDialog(IDD_LIST_CATS);
                         break;
 
-
-
-                  /*  case R.id.img_1_id:
-
-                        if (mImage_uris.size() == 0)
-                            return true;
-                        mImage_uris.remove(0);
-                        setImageViewsSrc();
-                        return true;
-                    case R.id.img_2_id:
-                        if (mImage_uris.size() < 2)
-                            return true;
-                        mImage_uris.remove(1);
-                        setImageViewsSrc();
-                        return true;
-                    case R.id.img_3_id:
-                        if (mImage_uris.size() < 3)
-                            return true;
-                        mImage_uris.remove(2);
-                        setImageViewsSrc();
-                        return true;
-                    case R.id.img_4_id:
-                        if (mImage_uris.size() < 4)
-                            return true;
-                        mImage_uris.remove(3);
-                        setImageViewsSrc();
-                        return true;
-                    case R.id.img_5_id:
-                        if (mImage_uris.size() < 5)
-                            return true;
-                        mImage_uris.remove(4);
-                        setImageViewsSrc();
-                       ;*/
-
                     default:
                         return false;
                 }
@@ -561,7 +491,6 @@ public class AddActivity extends AppCompatActivity {
         mUploadStatusDelegate = new UploadStatusDelegate() {
             @Override
             public void onProgress(UploadInfo uploadInfo) {
-
             }
 
             @Override
@@ -576,12 +505,9 @@ public class AddActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(UploadInfo uploadInfo) {
-
             }
         };
     }
-
-
 
     void openImageChooser() {
         Intent intent = new Intent();
@@ -607,6 +533,20 @@ public class AddActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+
+            case R.id.map_img_id:
+                SharedPreferences sharedPreferences = getSharedPreferences(LocationUpdateService.sSharedPrefForFixedLocations, MODE_PRIVATE);
+                String current_trail = sharedPreferences.getString("locations", "");
+                if (current_trail.isEmpty()) {
+                    Toast.makeText(getApplication(), "No current trail to show!!", Toast.LENGTH_LONG).show();
+                    return true;
+                }
+                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+                intent.putExtra("trail", current_trail);
+                startActivity(intent);
+                return true;
+
+
             case R.id.start_tracking_id:
                 stopService(mIntentOfLocationUpdateService);
                 LocationUpdateService.sActivity = AddActivity.this;
@@ -641,31 +581,22 @@ public class AddActivity extends AppCompatActivity {
                 // Get the url from data
                 Uri selectedImageUri = data.getData();
                 if (null != selectedImageUri) {
-                    // Get the path from the Uri
-                    //String path = getPathFromURI(selectedImageUri);
-                    //Log.e("mmm", "Image Path : " + path);
-                    // Set the image in ImageView
-
 
                     Uri imageUri = data.getData();
                     Bitmap scaledBitmap = null;
+
                     try {
                         Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
                         scaledBitmap = Bitmap.createScaledBitmap(bitmap, 200, 200, false);
                         bitmap.recycle();
 
-                        // get thumbnial from storage android
-
                     } catch (IOException pE) {
                         pE.printStackTrace();
                     }
 
-
                     if (scaledBitmap != null) {
-
                         mImg.setImageBitmap(scaledBitmap);
                         mImg.setVisibility(View.VISIBLE);
-
                         System.out.print(" mImageUris in = " + i);
                         mImageUris.set(i, selectedImageUri);
                         size ++;
@@ -673,15 +604,11 @@ public class AddActivity extends AppCompatActivity {
                     }
 
                 }
-
-
                     if (size == 5) {
                         image_plus.setVisibility(View.GONE);}
                     else{
                         image_plus.setVisibility(View.VISIBLE);
                     }
-
-
             }
 
             if (requestCode == LocationUpdateService.REQUEST_CODE_FOR_RESOLUTION_REQUEST) {
@@ -695,19 +622,14 @@ public class AddActivity extends AppCompatActivity {
         switch (id) {
             case IDD_LIST_CATS:
 
-                final String[] mTables ={"INSERT", "DELETE", "CANCEL"};
+                final String[] mTables ={"INSERT", "DELETE", "BACK"};
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Choose something"); // заголовок для диалога
+                builder.setTitle("Choose something");
 
                 builder.setItems(mTables, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int item) {
-
-                     /*   Toast.makeText(getApplicationContext(),
-                                "yntrel es : " + mTables[item]+"i = "+ item,
-                                Toast.LENGTH_SHORT).show();*/
-
 
                         switch (item) {
                             case 0:
@@ -751,7 +673,6 @@ public class AddActivity extends AppCompatActivity {
         return res;
     }
 
-
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         View v = getCurrentFocus();
@@ -777,21 +698,4 @@ public class AddActivity extends AppCompatActivity {
             imm.hideSoftInputFromWindow(activity.getWindow().getDecorView().getWindowToken(), 0);
         }
     }
-
-    /*@Override
-    protected void onSaveInstanceState(Bundle outState) {
-        String refs_encoded = "";
-        if (size != 0) {
-            for (int i = 0; i < mImageUris.size(); i++) {
-
-                if (null != mImageUris.get(i)) {
-                    refs_encoded += mImageUris.get(i).toString() + ":::";
-                }
-            }
-
-            outState.putString("image-refs", refs_encoded);
-        }
-
-        super.onSaveInstanceState(outState);
-    }*/
 }
