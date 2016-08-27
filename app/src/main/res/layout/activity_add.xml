@@ -66,20 +66,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
             <EditText
-                android:layout_gravity="center_horizontal"
+                android:textSize="25dp"
+                android:layout_gravity="left"
+                android:layout_marginLeft="8dp"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:id="@+id/author_txt_id"
-                android:hint="Author: "
+                android:hint="AUTHOR: "
                 />
-            <EditText
 
-                android:layout_gravity="center_horizontal"
+            <EditText
+                android:layout_gravity="left"
+                android:layout_marginLeft="8dp"
+                android:textSize="25dp"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:id="@+id/title_txt_id"
-                android:hint="Title: "/>
+                android:hint="TITLE:      "/>
         </LinearLayout>
         <ImageView
             android:layout_gravity="center"
