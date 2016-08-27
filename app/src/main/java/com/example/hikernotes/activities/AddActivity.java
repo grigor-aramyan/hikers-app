@@ -37,6 +37,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.hikernotes.MainActivity;
 import com.example.hikernotes.MapsActivity;
 import com.example.hikernotes.R;
+import com.example.hikernotes.consumptions.VolleyRequests;
 import com.example.hikernotes.realms.CurrentTour;
 import com.example.hikernotes.services.LocationUpdateService;
 import com.example.hikernotes.utils.MeasureUnitConversionUtils;
@@ -81,9 +82,9 @@ public class AddActivity extends AppCompatActivity {
     private int mImageSizeInPx;
     private static final int SELECT_PICTURE = 100;
     private int i = 0;
-    private ArrayList<Uri> mImageUris  ;
+    private ArrayList<Uri> mImageUris;
     private final int IDD_LIST_CATS = 1;
-    int size = 0;
+    private int size = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -314,7 +315,7 @@ public class AddActivity extends AppCompatActivity {
                         break;
 
                     case R.id.upload_tour_btn_id:
-                        StringRequest stringRequest = new StringRequest(Request.Method.POST, MainActivity.sUrlForConnectivityCheck, new Response.Listener<String>() {
+                        StringRequest stringRequest = new StringRequest(Request.Method.POST, VolleyRequests.sUrlForConnectivityCheck, new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
                                 if (response.startsWith("got it")) {
@@ -351,7 +352,7 @@ public class AddActivity extends AppCompatActivity {
                                         jsonObject.put("date", date);
                                         jsonObject.put("trail", trail);
                                     } catch (JSONException jExp) {}
-                                    JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, MainActivity.sUrlForNewTourAdd, jsonObject, new Response.Listener<JSONObject>() {
+                                    JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, VolleyRequests.sUrlForNewTourAdd, jsonObject, new Response.Listener<JSONObject>() {
                                         @Override
                                         public void onResponse(JSONObject response) {
                                             try {
@@ -359,7 +360,7 @@ public class AddActivity extends AppCompatActivity {
                                                     int new_tour_id = response.getInt("lastid");
 
                                                     for (Uri uri: mImage_uris) {
-                                                        MultipartUploadRequest request = new MultipartUploadRequest(getApplication(), MainActivity.sUrlForImageUploads)
+                                                        MultipartUploadRequest request = new MultipartUploadRequest(getApplication(), VolleyRequests.sUrlForImageUploads)
                                                                 .setAutoDeleteFilesAfterSuccessfulUpload(false)
                                                                 .setMaxRetries(3)
                                                                 .addParameter("tourid", new_tour_id + "")
@@ -463,22 +464,7 @@ public class AddActivity extends AppCompatActivity {
 
                                 break;
                         }
-
-
-
-
-
-
-
-
-
-                    /*case R.id.img_1_id:
-                    case R.id.img_2_id:
-                    case R.id.img_3_id:
-                    case R.id.img_4_id:
-                    case R.id.img_5_id:*/
-                        //  getImages();
-                        // break;
+                        break;
 
                     default:
                         break;
@@ -682,9 +668,6 @@ public class AddActivity extends AppCompatActivity {
                         i++;
                     }
 
-
-
-
                 }
 
 
@@ -697,19 +680,8 @@ public class AddActivity extends AppCompatActivity {
 
             }
 
-
-
-
-            switch (requestCode) {
-                case LocationUpdateService.REQUEST_CODE_FOR_RESOLUTION_REQUEST:
-                    Toast.makeText(this, "If you enabled settings, try to start tracking again!!", Toast.LENGTH_LONG).show();
-                    break;
-
-
-
-                default:
-                    break;
-
+            if (requestCode == LocationUpdateService.REQUEST_CODE_FOR_RESOLUTION_REQUEST) {
+                Toast.makeText(this, "If you enabled settings, try to start tracking again!!", Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -719,10 +691,10 @@ public class AddActivity extends AppCompatActivity {
         switch (id) {
             case IDD_LIST_CATS:
 
-                final String[] mTables ={"insert", "delete", "cencel"};
+                final String[] mTables ={"INSERT", "DELETE", "CANCEL"};
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("mi ban yntri "); // заголовок для диалога
+                builder.setTitle("Choose something"); // заголовок для диалога
 
                 builder.setItems(mTables, new DialogInterface.OnClickListener() {
                     @Override
@@ -802,15 +774,20 @@ public class AddActivity extends AppCompatActivity {
         }
     }
 
-    @Override
+    /*@Override
     protected void onSaveInstanceState(Bundle outState) {
         String refs_encoded = "";
-        for (Uri uri: mImage_uris) {
-            refs_encoded += uri.toString() + ":::";
+        if (size != 0) {
+            for (int i = 0; i < mImageUris.size(); i++) {
+                
+                if (null != mImageUris.get(i)) {
+                    refs_encoded += mImageUris.get(i).toString() + ":::";
+                }
+            }
+
+            outState.putString("image-refs", refs_encoded);
         }
 
-        outState.putString("image-refs", refs_encoded);
-
         super.onSaveInstanceState(outState);
-    }
+    }*/
 }

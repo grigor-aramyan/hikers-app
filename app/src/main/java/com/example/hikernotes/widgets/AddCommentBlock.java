@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.NumberPicker;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -21,6 +22,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.hikernotes.MainActivity;
 import com.example.hikernotes.R;
 import com.example.hikernotes.activities.DetailsActivity;
+import com.example.hikernotes.consumptions.VolleyRequests;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -60,7 +62,7 @@ public class AddCommentBlock extends FrameLayout {
             public void onClick(View v) {
                 switch (v.getId()) {
                     case R.id.react_button_id:
-                        StringRequest stringRequest = new StringRequest(Request.Method.POST, MainActivity.sUrlForConnectivityCheck, new Response.Listener<String>() {
+                        StringRequest stringRequest = new StringRequest(Request.Method.POST, VolleyRequests.sUrlForConnectivityCheck, new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
                                 if (response.startsWith("got it")) {
@@ -72,7 +74,7 @@ public class AddCommentBlock extends FrameLayout {
                                         return;
                                     }
                                     final String data_encoded = mSelectedTourId + "YYY" + name + "YYY" + comment;
-                                    StringRequest stringRequest1 = new StringRequest(Request.Method.POST, MainActivity.sUrlForNewComment, new Response.Listener<String>() {
+                                    StringRequest stringRequest1 = new StringRequest(Request.Method.POST, VolleyRequests.sUrlForNewComment, new Response.Listener<String>() {
                                         @Override
                                         public void onResponse(String response) {
                                             if (response.startsWith("ok")) {

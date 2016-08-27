@@ -71,7 +71,7 @@ public class MainRecyclerListAdapter extends RecyclerView.Adapter<MainRecyclerLi
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         final Tour tour = mDataset.get(position);
-        holder.mTitle.setText(tour.getTitle());
+        holder.mTitle.setText(tour.getTitle().toUpperCase());
         SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
         holder.mDate.setText(formatter.format(tour.getDate()));
         holder.mLikes.setText("Likes: " + tour.getLikes());

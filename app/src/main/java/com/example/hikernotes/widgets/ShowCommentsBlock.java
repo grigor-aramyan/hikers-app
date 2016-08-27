@@ -20,6 +20,7 @@ import com.example.hikernotes.MainActivity;
 import com.example.hikernotes.R;
 import com.example.hikernotes.activities.DetailsActivity;
 import com.example.hikernotes.adapters.CommentsListAdapter;
+import com.example.hikernotes.consumptions.VolleyRequests;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,11 +58,11 @@ public class ShowCommentsBlock extends FrameLayout {
     }
 
     private void fetchAndDisplayComments() {
-        StringRequest request = new StringRequest(Request.Method.POST, MainActivity.sUrlForConnectivityCheck, new Response.Listener<String>() {
+        StringRequest request = new StringRequest(Request.Method.POST, VolleyRequests.sUrlForConnectivityCheck, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 if (response.startsWith("got it")) {
-                    StringRequest stringRequest = new StringRequest(Request.Method.POST, MainActivity.sUrlForPullingComments, new Response.Listener<String>() {
+                    StringRequest stringRequest = new StringRequest(Request.Method.POST, VolleyRequests.sUrlForPullingComments, new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
                             if (response.startsWith("no comments")) {

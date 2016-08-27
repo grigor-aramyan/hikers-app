@@ -19,4 +19,6 @@
     <string name="delete_trail_rsc">Delete trail</string>
     <string name="show_map_res">Show map</string>
     <string name="save_trail_res">SAVE TRAIL</string>
+    <string name="no_data_rsc">No Data</string>
+    <string name="loading_data_rsc">Loading data...</string>
 </resources>

@@ -35,6 +35,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.hikernotes.MainActivity;
 import com.example.hikernotes.MapsActivity;
 import com.example.hikernotes.R;
+import com.example.hikernotes.consumptions.VolleyRequests;
 import com.example.hikernotes.realms.Tour;
 import com.example.hikernotes.realms.SavedTrail;
 import com.example.hikernotes.utils.MeasureUnitConversionUtils;
@@ -270,7 +271,7 @@ public class DetailsActivity extends AppCompatActivity {
                         Toast.makeText(getApplication(), "Trail saved", Toast.LENGTH_LONG).show();*/
                         break;
                     case R.id.upvote_btn_id:
-                        StringRequest stringRequest = new StringRequest(Request.Method.POST, MainActivity.sUrlForVoting, new Response.Listener<String>() {
+                        StringRequest stringRequest = new StringRequest(Request.Method.POST, VolleyRequests.sUrlForVoting, new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
                                 if (response.startsWith("done")) {
@@ -316,7 +317,7 @@ public class DetailsActivity extends AppCompatActivity {
                         mRequestQueue.add(stringRequest);
                         break;
                     case R.id.downvote_btn_id:
-                        StringRequest stringRequest1 = new StringRequest(Request.Method.POST, MainActivity.sUrlForVoting, new Response.Listener<String>() {
+                        StringRequest stringRequest1 = new StringRequest(Request.Method.POST, VolleyRequests.sUrlForVoting, new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
                                 if (response.startsWith("done")){

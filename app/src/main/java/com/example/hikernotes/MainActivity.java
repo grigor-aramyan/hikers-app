@@ -14,17 +14,18 @@ import android.view.SubMenu;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.hikernotes.activities.AddActivity;
+import com.example.hikernotes.activities.EmptyActivity;
 import com.example.hikernotes.adapters.MainRecyclerListAdapter;
+import com.example.hikernotes.consumptions.VolleyRequests;
 import com.example.hikernotes.realms.CurrentTour;
 import com.example.hikernotes.realms.SavedTrail;
 import com.example.hikernotes.realms.Tour;
@@ -44,23 +45,13 @@ import io.realm.Sort;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static String sUrlForConnectivityCheck = "http://hikingapp.net23.net/checknetaccess.php";
-    public static String sUrlForDataUpdate = "http://hikingapp.net23.net/updateappdata.php";
-    public static String sUrlForVoting = "http://hikingapp.net23.net/vote.php";
-    public static String sUrlForTourDetails = "http://hikingapp.net23.net/getremainingdata.php";
-    public static String sUrlForNewTourAdd = "http://hikingapp.net23.net/addnewtour.php";
-    public static String sUrlForImageUploads = "http://hikingapp.net23.net/storetourimages.php";
-    public static String sUrlForNewComment = "http://hikingapp.net23.net/addnewcomment.php";
-    public static String sUrlForPullingComments = "http://hikingapp.net23.net/pullcomments.php";
-
-    //private ViewPager mViewPager;
-    private RequestQueue mQueue;
     private Realm mRealm;
-    //private MyPagerAdapter adapter;
     private RecyclerView mRecyclerView;
     private MainRecyclerListAdapter mListAdapter;
     private RealmList<Tour> mToursList;
     private int SORT_FLAG = 1;
+    private LinearLayout mProgressBarLayout;
+    private boolean mIsLocalDBEmpty = true;
 
 
     @Override
@@ -79,21 +70,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mQueue = Volley.newRequestQueue(this);
         mRealm = Realm.getDefaultInstance();
-
-        int flag = getIntent().getIntExtra("flag_continue", 1);
-
-        if (flag != 2) {
-            checkConnectivity();
-            return;
-        }
-
+        mProgressBarLayout = (LinearLayout) findViewById(R.id.progressBarLayoutId);
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_list);
 
-        mToursList = new RealmList<>();
         SharedPreferences sharedPreferences = getSharedPreferences("sort_type", Context.MODE_PRIVATE);
         SORT_FLAG = sharedPreferences.getInt("sort_by", 1);
+
+        RealmResults<Tour> toursInLocalDB = mRealm.where(Tour.class).findAll();
+        if (toursInLocalDB.size() > 0)
+            mIsLocalDBEmpty = false;
+
+        checkNetAccessAndFetchData(this);
+    }
+
+    public void populateToursRecyclerView() {
+
+        mToursList = new RealmList<>();
+
 
         mListAdapter = new MainRecyclerListAdapter(mToursList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -182,7 +176,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             case R.id.likes_check_id:
-                //Toast.makeText(this, "likes sort", Toast.LENGTH_LONG).show();
                 SharedPreferences sharedPreferences1 = getSharedPreferences("sort_type", MODE_PRIVATE);
                 SharedPreferences.Editor editor1 = sharedPreferences1.edit();
                 editor1.putInt("sort_by", 2);
@@ -237,29 +230,44 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    private void checkConnectivity() {
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, sUrlForConnectivityCheck, new Response.Listener<String>() {
+    private void checkNetAccessAndFetchData(Context context) {
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, VolleyRequests.sUrlForConnectivityCheck, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                // if true, net connection is available, we can fetch updated data from db
                 if (response.startsWith("got it")) {
-                    updateLocalDB();
+                    mRecyclerView.setVisibility(View.GONE);
+                    mProgressBarLayout.setVisibility(View.VISIBLE);
+                    updateLocalDBAndPopulateList();
+                } else if (!mIsLocalDBEmpty) {
+                    Toast.makeText(getApplicationContext(), "Data is from local DB", Toast.LENGTH_LONG).show();
+                    populateToursRecyclerView();
+                } else {
+                    Intent intent = new Intent(getApplicationContext(), EmptyActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplication(), "No connection! Data is from local DB!", Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                intent.putExtra("flag_continue", 2);
-                startActivity(intent);
+                if (!mIsLocalDBEmpty) {
+                    Toast.makeText(getApplicationContext(), "Data is from local DB", Toast.LENGTH_LONG).show();
+                    populateToursRecyclerView();
+                } else {
+                    Intent intent = new Intent(getApplicationContext(), EmptyActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                }
             }
         });
-        mQueue.add(stringRequest);
+        VolleyRequests.getQueue(context).add(stringRequest);
+
     }
 
-    private void updateLocalDB() {
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(sUrlForDataUpdate, new Response.Listener<JSONArray>() {
+
+    private void updateLocalDBAndPopulateList() {
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(VolleyRequests.sUrlForDataUpdate, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 if (response.length() > 1) {
@@ -294,34 +302,24 @@ public class MainActivity extends AppCompatActivity {
                             mRealm.commitTransaction();
                         } catch (JSONException jsconExp) { Log.e("yyy", "some json exp");}
                     }
-                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    intent.putExtra("flag_continue", 2);
-                    startActivity(intent);
+
+                    mProgressBarLayout.setVisibility(View.GONE);
+                    mRecyclerView.setVisibility(View.VISIBLE);
+                    populateToursRecyclerView();
+
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplication(), "Couldn't retrieve data from serv!! Locals will be used!!", Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.putExtra("flag_continue", 2);
-                startActivity(intent);
+                if (!mIsLocalDBEmpty) {
+                    Toast.makeText(getApplicationContext(), "Data is from local DB", Toast.LENGTH_LONG).show();
+                    populateToursRecyclerView();
+                }
+
             }
         });
-        mQueue.add(jsonArrayRequest);
+        VolleyRequests.getQueue(getApplicationContext()).add(jsonArrayRequest);
     }
 
-    /*@Override
-    public void onBackPressed() {
-        if (mViewPager == null || mViewPager.getCurrentItem() == 0) {
-            // If the user is currently looking at the first step, allow the system to handle the
-            // Back button. This calls finish() on this activity and pops the back stack.
-            super.onBackPressed();
-        } else {
-            // Otherwise, select the previous step.
-            mViewPager.setCurrentItem(mViewPager.getCurrentItem() - 1);
-        }
-    }*/
 }
