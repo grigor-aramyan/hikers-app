@@ -779,7 +779,7 @@ public class AddActivity extends AppCompatActivity {
         String refs_encoded = "";
         if (size != 0) {
             for (int i = 0; i < mImageUris.size(); i++) {
-                
+
                 if (null != mImageUris.get(i)) {
                     refs_encoded += mImageUris.get(i).toString() + ":::";
                 }

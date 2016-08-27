@@ -95,28 +95,36 @@
                     android:text="Date: "/>
             </LinearLayout>
             <LinearLayout
-                android:layout_width="0dp"
-                android:layout_weight="1"
+
+                android:layout_width="76dp"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/likes_count_txt_id"
-                    android:text="Likes: 83"
-                    android:layout_gravity="center_vertical"/>
+                android:orientation="horizontal"
+                android:layout_weight="0.17">
+
                 <ImageView
+
+                    android:layout_marginTop="8dp"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:id="@+id/upvote_btn_id"
                     android:src="@drawable/like_icon"
-                    android:layout_marginLeft="15dp"/>
+                    android:layout_marginLeft="10dp"/>
+                <TextView
+                    android:layout_marginLeft="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/likes_count_txt_id"
+                    android:text=""
+                    android:textAppearance="?android:textAppearanceLarge"
+                    android:layout_gravity="center_vertical"/>
                 <ImageView
+
+                    android:layout_marginTop="8dp"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:id="@+id/downvote_btn_id"
                     android:src="@drawable/dislike_icon"
-                    android:layout_marginLeft="15dp"/>
+                    android:layout_marginLeft="10dp"/>
             </LinearLayout>
 
         </LinearLayout>
@@ -129,32 +137,22 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="150dp"
+            android:minHeight="50dp"
             android:background="@color/colorAccent"
             android:id="@+id/tour_info_txt_id"
             android:text="some memos from tour"/>
 
-        <LinearLayout
+      <!-- <LinearLayout
+
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:minHeight="75dp">
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:id="@+id/map_img_id"
-                android:src="@drawable/map_icon"
-                android:layout_marginTop="10dp"/>
 
-            <Button
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:id="@+id/save_trail_btn_id"
-                android:text="@string/save_trail_rsc"/>
+
+
             <Button
                 android:layout_width="0dp"
                 android:layout_weight="1"
@@ -162,21 +160,23 @@
                 android:id="@+id/delete_trail_btn_id"
                 android:text="@string/delete_trail_rsc"
                 android:visibility="gone"/>
-        </LinearLayout>
+        </LinearLayout>-->
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-        <com.example.hikernotes.widgets.AddCommentBlock
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:id="@+id/add_comment_block_id"/>
+
         <com.example.hikernotes.widgets.ShowCommentsBlock
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/show_comments_block_id"/>
+            android:id="@+id/show_comments_block_id"
+            android:layout_marginBottom="51dp"/>
+
+        />
+
+
 
     </LinearLayout>
 
@@ -189,6 +189,13 @@
 
 </ScrollView>
 
+    <com.example.hikernotes.widgets.AddCommentBlock
+
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_width="match_parent"
+        android:layout_height="51dp"
+        android:id="@+id/add_comment_block_id" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/img_preview_holder"

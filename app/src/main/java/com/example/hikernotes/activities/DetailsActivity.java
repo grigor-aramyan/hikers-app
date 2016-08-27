@@ -95,12 +95,12 @@ public class DetailsActivity extends AppCompatActivity {
         RealmResults<Tour> realmResults = mRealm.where(Tour.class).equalTo("id", mSelectedTourID).findAll();
         if (realmResults.size() > 0) {
             Tour tour = realmResults.get(0);
-            title_txt.setText("Title: " + tour.getTitle());
+            title_txt.setText("" + tour.getTitle().toUpperCase());
             mTitle = tour.getTitle();
             SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
             date_txt.setText("Date: " + formatter.format(tour.getDate()));
-            likes_txt.setText("Likes: " + tour.getLikes());
-            author_txt.setText("Author: " + tour.getAuthor());
+            likes_txt.setText("" + tour.getLikes());
+            author_txt.setText("Author: " + tour.getAuthor().toUpperCase());
             info_txt.setText(tour.getInfo());
             mTrail = tour.getTrail();
 
@@ -123,8 +123,8 @@ public class DetailsActivity extends AppCompatActivity {
 
         RealmResults realmResults1 = mRealm.where(SavedTrail.class).equalTo("id", mSelectedTourID).findAll();
         if (realmResults1.size() > 0) {
-            save_trail_btn.setVisibility(View.GONE);
-            delete_trail_btn.setVisibility(View.VISIBLE);
+           // save_trail_btn.setVisibility(View.GONE);
+           // delete_trail_btn.setVisibility(View.VISIBLE);
         }
 
     }
@@ -166,8 +166,8 @@ public class DetailsActivity extends AppCompatActivity {
         info_txt = (TextView) findViewById(R.id.tour_info_txt_id);
         likes_txt = (TextView) findViewById(R.id.likes_count_txt_id);
 
-        map_image = (ImageView) findViewById(R.id.map_img_id);
-        map_image.setOnClickListener(mClickListener);
+       // map_image = (ImageView) findViewById(R.id.map_img_id);
+        //map_image.setOnClickListener(mClickListener);
         image_one = (ImageView) findViewById(R.id.img_1_id);
         image_two = (ImageView) findViewById(R.id.img_2_id);
         image_tree = (ImageView) findViewById(R.id.img_3_id);
@@ -230,10 +230,10 @@ public class DetailsActivity extends AppCompatActivity {
         mImagesForTour.add(image_four);
         mImagesForTour.add(image_five);
 
-        save_trail_btn = (Button) findViewById(R.id.save_trail_btn_id);
-        save_trail_btn.setOnClickListener(mClickListener);
-        delete_trail_btn = (Button) findViewById(R.id.delete_trail_btn_id);
-        delete_trail_btn.setOnClickListener(mClickListener);
+      //  save_trail_btn = (Button) findViewById(R.id.save_trail_btn_id);
+        //save_trail_btn.setOnClickListener(mClickListener);
+        //delete_trail_btn = (Button) findViewById(R.id.delete_trail_btn_id);
+        //delete_trail_btn.setOnClickListener(mClickListener);
 
         upvote_img_btn = (ImageView) findViewById(R.id.upvote_btn_id);
         upvote_img_btn.setOnClickListener(mClickListener);
@@ -250,7 +250,7 @@ public class DetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 switch (v.getId()){
-                    case R.id.delete_trail_btn_id:
+                  /*  case R.id.delete_trail_btn_id:
                         final RealmResults realmResults = mRealm.where(SavedTrail.class).equalTo("id", mSelectedTourID).findAll();
                         mRealm.executeTransaction(new Realm.Transaction() {
                             @Override
@@ -262,14 +262,7 @@ public class DetailsActivity extends AppCompatActivity {
                         intent1.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent1);
                         break;
-                    case R.id.save_trail_btn_id:
-                       /* mRealm.beginTransaction();
-                        SavedTrail savedTrail = new SavedTrail(mSelectedTourID, mTitle, mTrail);
-
-                        mRealm.copyToRealmOrUpdate(savedTrail);
-                        mRealm.commitTransaction();
-                        Toast.makeText(getApplication(), "Trail saved", Toast.LENGTH_LONG).show();*/
-                        break;
+*/
                     case R.id.upvote_btn_id:
                         StringRequest stringRequest = new StringRequest(Request.Method.POST, VolleyRequests.sUrlForVoting, new Response.Listener<String>() {
                             @Override
@@ -284,7 +277,7 @@ public class DetailsActivity extends AppCompatActivity {
                                         mRealm.copyToRealmOrUpdate(tour);
                                         mRealm.commitTransaction();
 
-                                        likes_txt.setText("Likes: " + (tour_likes + 1));
+                                        likes_txt.setText("" + (tour_likes + 1));
                                         likes_txt.setTextColor(getResources().getColor(R.color.colorMaterialGreen));
 
                                         upvote_img_btn.setClickable(false);
@@ -330,7 +323,7 @@ public class DetailsActivity extends AppCompatActivity {
                                         mRealm.copyToRealmOrUpdate(tour);
                                         mRealm.commitTransaction();
 
-                                        likes_txt.setText("Likes: " + (tour_likes - 1));
+                                        likes_txt.setText("" + (tour_likes - 1));
                                         likes_txt.setTextColor(getResources().getColor(R.color.colorMaterialRed));
 
                                         downvote_img_btn.setClickable(false);
