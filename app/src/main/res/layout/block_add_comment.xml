@@ -6,15 +6,18 @@
 
 
 <LinearLayout
+    android:background="@color/colorCommentsBackground"
     android:layout_width="match_parent"
     android:layout_height="50dp">
+
     <EditText
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="5"
         android:hint="Comment"
         android:id="@+id/comment_field_id"
-        android:background="@color/colorAccent"
+
+
         android:focusableInTouchMode="true"/>
 
     <Button
