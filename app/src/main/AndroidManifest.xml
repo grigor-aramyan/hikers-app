@@ -30,13 +30,11 @@
         <activity
             android:name=".activities.DetailsActivity"
             android:label="@string/details_rsc"
-            android:parentActivityName=".MainActivity"
             android:windowSoftInputMode="stateUnchanged"/>
         <activity
             android:name=".activities.AddActivity"
             android:label="@string/add_tour_rsc"
-            android:windowSoftInputMode="stateUnchanged"
-            android:parentActivityName=".MainActivity"/>
+            android:windowSoftInputMode="stateUnchanged"/>
         <activity android:name=".activities.EmptyActivity"
                   android:label="@string/no_data_rsc"/>
 

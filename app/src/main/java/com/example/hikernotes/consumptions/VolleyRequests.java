@@ -26,12 +26,8 @@ public class VolleyRequests {
 
     public static RequestQueue sQueue = null;
 
-    public static boolean isInternetAvailable;
-
     private VolleyRequests() {
     }
-
-
 
     public static RequestQueue getQueue(Context context) {
         if (null == sQueue)

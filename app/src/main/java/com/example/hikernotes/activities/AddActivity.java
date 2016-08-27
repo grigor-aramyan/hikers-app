@@ -607,6 +607,9 @@ public class AddActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
             case R.id.start_tracking_id:
                 stopService(mIntentOfLocationUpdateService);
                 LocationUpdateService.sActivity = AddActivity.this;
@@ -778,20 +781,4 @@ public class AddActivity extends AppCompatActivity {
         }
     }
 
-    /*@Override
-    protected void onSaveInstanceState(Bundle outState) {
-        String refs_encoded = "";
-        if (size != 0) {
-            for (int i = 0; i < mImageUris.size(); i++) {
-
-                if (null != mImageUris.get(i)) {
-                    refs_encoded += mImageUris.get(i).toString() + ":::";
-                }
-            }
-
-            outState.putString("image-refs", refs_encoded);
-        }
-
-        super.onSaveInstanceState(outState);
-    }*/
 }

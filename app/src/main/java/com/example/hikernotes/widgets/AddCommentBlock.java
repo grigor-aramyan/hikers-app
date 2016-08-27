@@ -40,6 +40,7 @@ public class AddCommentBlock extends FrameLayout {
     private EditText  comment_edt;
     private Button react_btn;
     private OnClickListener mClickListener;
+    private OnCommentAdded mCommentAdded;
     private RequestQueue mQueue;
     private int mSelectedTourId;
 
@@ -144,9 +145,11 @@ public class AddCommentBlock extends FrameLayout {
                                 Toast.makeText(getContext(), "We add new comment to this tour!! Update to see it!!", Toast.LENGTH_LONG).show();
                                 ///name_edt.setText("");
                                 comment_edt.setText("");
+
+                                mCommentAdded.updateCommentsList();
                             }
                             if (response.startsWith("Connection"))
-                                Toast.makeText(getContext(), "Connection issue! Try later, pease!!", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getContext(), "Connection issue! Try later, please!!", Toast.LENGTH_LONG).show();
                         }
                     }, new Response.ErrorListener() {
                         @Override
@@ -193,6 +196,14 @@ public class AddCommentBlock extends FrameLayout {
         react_btn.setOnClickListener(mClickListener);
     }
 
+
+    public interface OnCommentAdded {
+        public void updateCommentsList();
+    }
+
+    public void setOnCommentAdded(OnCommentAdded onCommentAdded) {
+        mCommentAdded = onCommentAdded;
+    }
 
 
 }

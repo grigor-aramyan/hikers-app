@@ -57,7 +57,7 @@ public class ShowCommentsBlock extends FrameLayout {
 
     }
 
-    private void fetchAndDisplayComments() {
+    public void fetchAndDisplayComments() {
         StringRequest request = new StringRequest(Request.Method.POST, VolleyRequests.sUrlForConnectivityCheck, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {

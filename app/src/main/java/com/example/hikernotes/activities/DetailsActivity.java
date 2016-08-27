@@ -139,6 +139,9 @@ public class DetailsActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
+            case android.R.id.home:
+                finish();
+                return true;
             case R.id.action_save_trial:
                 mRealm.beginTransaction();
                 SavedTrail savedTrail = new SavedTrail(mSelectedTourID, mTitle, mTrail);
@@ -240,8 +243,16 @@ public class DetailsActivity extends AppCompatActivity {
         downvote_img_btn = (ImageView) findViewById(R.id.downvote_btn_id);
         downvote_img_btn.setOnClickListener(mClickListener);
 
-        mAddCommentBlock = (AddCommentBlock) findViewById(R.id.add_comment_block_id);
+
         mShowCommentsBlock = (ShowCommentsBlock) findViewById(R.id.show_comments_block_id);
+        mAddCommentBlock = (AddCommentBlock) findViewById(R.id.add_comment_block_id);
+        mAddCommentBlock.setOnCommentAdded(new AddCommentBlock.OnCommentAdded() {
+            @Override
+            public void updateCommentsList() {
+                mShowCommentsBlock.fetchAndDisplayComments();
+            }
+        });
+
 
     }
 
@@ -263,6 +274,7 @@ public class DetailsActivity extends AppCompatActivity {
                         startActivity(intent1);
                         break;
 */
+
                     case R.id.upvote_btn_id:
                         StringRequest stringRequest = new StringRequest(Request.Method.POST, VolleyRequests.sUrlForVoting, new Response.Listener<String>() {
                             @Override
@@ -457,5 +469,9 @@ public class DetailsActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
-
+    @Override
+    protected void onUserLeaveHint() {
+        Log.e("kkk", "onUserLeaveHint");
+        super.onUserLeaveHint();
+    }
 }
