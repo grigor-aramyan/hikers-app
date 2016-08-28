@@ -329,6 +329,7 @@ public class AddActivity extends AppCompatActivity {
                                         jsonObject.put("date", date);
                                         jsonObject.put("trail", trail);
                                     } catch (JSONException jExp) {}
+                                    Toast.makeText(getApplicationContext(), "We're uploading the data", Toast.LENGTH_LONG).show();
                                     JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, VolleyRequests.sUrlForNewTourAdd, jsonObject, new Response.Listener<JSONObject>() {
                                         @Override
                                         public void onResponse(JSONObject response) {
