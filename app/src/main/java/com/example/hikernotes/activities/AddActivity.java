@@ -573,22 +573,9 @@ public class AddActivity extends AppCompatActivity {
                 Uri selectedImageUri = data.getData();
                 if (null != selectedImageUri) {
 
-                    Uri imageUri = data.getData();
-                    Bitmap scaledBitmap = null;
-
-                    try {
-                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
-                        scaledBitmap = Bitmap.createScaledBitmap(bitmap, 200, 200, false);
-                        bitmap.recycle();
-
-                    } catch (IOException pE) {
-                        pE.printStackTrace();
-                    }
-
-                    if (scaledBitmap != null) {
-                        mImg.setImageBitmap(scaledBitmap);
+                    if (!selectedImageUri.toString().isEmpty()) {
+                        Picasso.with(this).load(selectedImageUri).resize(200, 200).centerCrop().into(mImg);
                         mImg.setVisibility(View.VISIBLE);
-                        System.out.print(" mImageUris in = " + i);
                         mImageUris.set(i, selectedImageUri);
                         size ++;
                         i++;
