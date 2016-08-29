@@ -8,15 +8,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.opengl.Visibility;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -34,7 +31,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.hikernotes.MainActivity;
 import com.example.hikernotes.MapsActivity;
 import com.example.hikernotes.R;
 import com.example.hikernotes.consumptions.VolleyRequests;
@@ -55,7 +51,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -131,18 +126,9 @@ public class AddActivity extends AppCompatActivity {
 
         mIntentOfLocationUpdateService = new Intent(this, LocationUpdateService.class);
 
-        if (null != savedInstanceState) {
-            String saved_refs_encoded = savedInstanceState.getString("image-refs", "");
-            if (!saved_refs_encoded.isEmpty()) {
-                String[] saved_refs = saved_refs_encoded.split(":::");
-                for (String s: saved_refs){
-                    mImage_uris.add(Uri.parse(s));
-                }
-                setImageViewsSrc();
-            }
-        }
     }
 
+    // reserve method
     private void setImageViewsSrc() {
 
         int uri_qnt = mImage_uris.size();
@@ -165,6 +151,7 @@ public class AddActivity extends AppCompatActivity {
         });
     }
 
+    // reserve method
     private void getImages() {
         int selectionLimit = IMAGES_MAX_QNTY - mImage_uris.size();
         if (selectionLimit == 0) {

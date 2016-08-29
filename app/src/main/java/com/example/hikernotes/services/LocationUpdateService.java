@@ -38,6 +38,7 @@ public class LocationUpdateService extends Service {
     private LocationRequest mLocationRequest;
     public static Activity sActivity;
     public static final int REQUEST_CODE_FOR_RESOLUTION_REQUEST = 1;
+    // ToDo: make this fields available for user input
     private long mLocationUpdateInterval = 10000L;
     private long mLocationUpdateIntervalFastest = 5000L;
     public static String sSharedPrefForFixedLocations = "locationsBase";

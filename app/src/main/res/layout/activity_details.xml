@@ -143,7 +143,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="50dp"
-
             android:id="@+id/tour_info_txt_id"
             android:text="some memos from tour"/>
 
@@ -160,10 +159,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/show_comments_block_id"
             android:layout_marginBottom="51dp"/>
-
-        />
-
-
 
     </LinearLayout>
 

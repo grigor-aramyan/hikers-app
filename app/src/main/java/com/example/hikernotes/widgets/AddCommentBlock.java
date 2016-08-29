@@ -4,13 +4,11 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.NumberPicker;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -18,16 +16,11 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.hikernotes.MainActivity;
 import com.example.hikernotes.R;
 import com.example.hikernotes.activities.DetailsActivity;
 import com.example.hikernotes.consumptions.VolleyRequests;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -82,7 +75,7 @@ public class AddCommentBlock extends FrameLayout {
 
 
         LayoutInflater li = LayoutInflater.from(getContext());
-        View promptsView = li.inflate(R.layout.edite_your_name_dialog, null);
+        View promptsView = li.inflate(R.layout.edit_your_name_dialog, null);
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                 getContext());
@@ -103,9 +96,8 @@ public class AddCommentBlock extends FrameLayout {
                                 // edit text
 
                                 if (!userInput.getText().toString().isEmpty()) {
-                                    aploadComment(userInput.getText().toString());
+                                    uploadComment(userInput.getText().toString());
                                 }
-                                // name.setText(userInput.getText());
 
                             }
                         })
@@ -125,7 +117,7 @@ public class AddCommentBlock extends FrameLayout {
 
     }
 
-    public void aploadComment(final String namearg){
+    public void uploadComment(final String namearg){
         StringRequest stringRequest = new StringRequest(Request.Method.POST, VolleyRequests.sUrlForConnectivityCheck, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -143,7 +135,6 @@ public class AddCommentBlock extends FrameLayout {
                         public void onResponse(String response) {
                             if (response.startsWith("ok")) {
                                 Toast.makeText(getContext(), "We add new comment to this tour!! Update to see it!!", Toast.LENGTH_LONG).show();
-                                ///name_edt.setText("");
                                 comment_edt.setText("");
 
                                 mCommentAdded.updateCommentsList();

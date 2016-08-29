@@ -12,12 +12,4 @@
             </group>
         </menu>
     </item>
-    <!--item android:id="@+id/saved_trails_id" android:title="@string/saved_trails_rsc" android:visible="true">
-        <menu>
-            <group android:id="@+id/trails_id" android:checkableBehavior="none">
-                <item android:id="@+id/item_tmp"
-                      android:title="Temp saved" />
-            </group>
-        </menu>
-    </item-->
 </menu>

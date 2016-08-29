@@ -57,6 +57,7 @@ public class ShowCommentsBlock extends FrameLayout {
 
     }
 
+    // ToDo: remove data fetching chunk from view
     public void fetchAndDisplayComments() {
         StringRequest request = new StringRequest(Request.Method.POST, VolleyRequests.sUrlForConnectivityCheck, new Response.Listener<String>() {
             @Override

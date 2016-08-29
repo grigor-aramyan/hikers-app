@@ -16,8 +16,6 @@
         android:layout_weight="5"
         android:hint="Comment"
         android:id="@+id/comment_field_id"
-
-
         android:focusableInTouchMode="true"/>
 
     <Button

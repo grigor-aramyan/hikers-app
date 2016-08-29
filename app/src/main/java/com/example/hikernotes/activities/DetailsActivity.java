@@ -55,7 +55,6 @@ import io.realm.RealmResults;
 public class DetailsActivity extends AppCompatActivity {
     private TextView title_txt, date_txt, author_txt, info_txt, likes_txt;
     private ImageView map_image, image_one, image_two, image_tree, image_four, image_five;
-    private Button save_trail_btn, delete_trail_btn;
     private ImageView upvote_img_btn, downvote_img_btn;
     private Realm mRealm;
     private RequestQueue mRequestQueue;
@@ -118,12 +117,12 @@ public class DetailsActivity extends AppCompatActivity {
         mPreviewViewPager.setOffscreenPageLimit(mImg_refs.length);
         mPreviewViewPager.setAdapter(mPagerAdapter);
 
-
-        RealmResults realmResults1 = mRealm.where(SavedTrail.class).equalTo("id", mSelectedTourID).findAll();
+        // chunk needs some  work yet
+        /*RealmResults realmResults1 = mRealm.where(SavedTrail.class).equalTo("id", mSelectedTourID).findAll();
         if (realmResults1.size() > 0) {
            // save_trail_btn.setVisibility(View.GONE);
            // delete_trail_btn.setVisibility(View.VISIBLE);
-        }
+        }*/
 
     }
 
@@ -181,8 +180,6 @@ public class DetailsActivity extends AppCompatActivity {
         info_txt = (TextView) findViewById(R.id.tour_info_txt_id);
         likes_txt = (TextView) findViewById(R.id.likes_count_txt_id);
 
-       // map_image = (ImageView) findViewById(R.id.map_img_id);
-        //map_image.setOnClickListener(mClickListener);
         image_one = (ImageView) findViewById(R.id.img_1_id);
         image_two = (ImageView) findViewById(R.id.img_2_id);
         image_tree = (ImageView) findViewById(R.id.img_3_id);
@@ -245,11 +242,6 @@ public class DetailsActivity extends AppCompatActivity {
         mImagesForTour.add(image_four);
         mImagesForTour.add(image_five);
 
-      //  save_trail_btn = (Button) findViewById(R.id.save_trail_btn_id);
-        //save_trail_btn.setOnClickListener(mClickListener);
-        //delete_trail_btn = (Button) findViewById(R.id.delete_trail_btn_id);
-        //delete_trail_btn.setOnClickListener(mClickListener);
-
         upvote_img_btn = (ImageView) findViewById(R.id.upvote_btn_id);
         upvote_img_btn.setOnClickListener(mClickListener);
         downvote_img_btn = (ImageView) findViewById(R.id.downvote_btn_id);
@@ -273,9 +265,6 @@ public class DetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 switch (v.getId()){
-                  /*
-*/
-
                     case R.id.upvote_btn_id:
                         StringRequest stringRequest = new StringRequest(Request.Method.POST, VolleyRequests.sUrlForVoting, new Response.Listener<String>() {
                             @Override
@@ -369,10 +358,7 @@ public class DetailsActivity extends AppCompatActivity {
                         };
                         mRequestQueue.add(stringRequest1);
                         break;
-                    case R.id.map_img_id:
-                       /* Intent intent = new Intent(getApplication(), MapsActivity.class);
-                        intent.putExtra("trail", mTrail);
-                        startActivity(intent);*/
+
                     default:
                         break;
                 }
@@ -405,8 +391,6 @@ public class DetailsActivity extends AppCompatActivity {
             imm.hideSoftInputFromWindow(activity.getWindow().getDecorView().getWindowToken(), 0);
         }
     }
-
-
 
 
     public static class PageFragment extends Fragment {
@@ -470,9 +454,4 @@ public class DetailsActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
-    @Override
-    protected void onUserLeaveHint() {
-        Log.e("kkk", "onUserLeaveHint");
-        super.onUserLeaveHint();
-    }
 }

@@ -8,7 +8,6 @@
         android:id="@+id/stop_tracking_id" />
 
     <item
-
         android:id="@+id/map_img_id"
         android:icon="@drawable/map_icon"
         android:title="@string/show_map_res"
