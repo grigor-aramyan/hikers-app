@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.widget.RemoteViews;
 
 import com.example.hikernotes.MainActivity;
@@ -23,6 +24,7 @@ import java.util.Date;
 public class NotificationUtils {
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public static void showUpdatedLocationNotification(Context context, double latitude, double longitude) {
+        boolean isLollipop = Build.VERSION.RELEASE.startsWith("5.") ? true : false;
         int notificationID = 21;
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.notification_location);
         if (latitude != 0.0){
@@ -38,6 +40,14 @@ public class NotificationUtils {
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
         remoteViews.setTextViewText(R.id.time_txt_id, "Fix time " + simpleDateFormat.format(new Date()));
+
+        // color of notif texts are set to black, since notification item back color is white by default in Lollipop
+        // and default white texts can't be seen
+        if (isLollipop) {
+            remoteViews.setTextColor(R.id.latitude_txt_id, ContextCompat.getColor(context, R.color.colorAbsoluteBlack));
+            remoteViews.setTextColor(R.id.longitude_txt_id, ContextCompat.getColor(context, R.color.colorAbsoluteBlack));
+            remoteViews.setTextColor(R.id.time_txt_id, ContextCompat.getColor(context, R.color.colorAbsoluteBlack));
+        }
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setContent(remoteViews);

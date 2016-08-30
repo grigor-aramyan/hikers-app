@@ -11,10 +11,6 @@
     <color name="colorOpaqueGrey">#809E9E9E</color>
     <color name="colorAbsoluteWhite">#FFFFFF</color>
     <color name="colorCommentsBackground">#b9f6ca</color>
-
-
-
-
-
+    <color name="colorAbsoluteBlack">#000000</color>
 
 </resources>
