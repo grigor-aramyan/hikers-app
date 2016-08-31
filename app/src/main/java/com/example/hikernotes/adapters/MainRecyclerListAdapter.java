@@ -55,7 +55,6 @@ public class MainRecyclerListAdapter extends RecyclerView.Adapter<MainRecyclerLi
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         mContext = parent.getContext();
         CardView list_row = (CardView) LayoutInflater.from(parent.getContext()).inflate(R.layout.item_row_main_list, parent, false);
-        //list_row.setBackgroundColor(mContext.getResources().getColor(R.color.colorMaterialOrange));
         list_row.setCardBackgroundColor(mContext.getResources().getColor(R.color.colorAccent));
 
         if (thumb_height_in_px == 1) {

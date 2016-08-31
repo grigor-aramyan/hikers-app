@@ -21,4 +21,7 @@
     <string name="save_trail_res">SAVE TRAIL</string>
     <string name="no_data_rsc">No Data</string>
     <string name="loading_data_rsc">Loading data...</string>
+    <string name="search_title_rsc">Search</string>
+    <string name="tour_name_rsc">Tour name</string>
+    <string name="search_results_rsc">Search Results</string>
 </resources>

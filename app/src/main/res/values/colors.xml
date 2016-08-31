@@ -12,5 +12,6 @@
     <color name="colorAbsoluteWhite">#FFFFFF</color>
     <color name="colorCommentsBackground">#b9f6ca</color>
     <color name="colorAbsoluteBlack">#000000</color>
+    <color name="colorOpaqueWhite">#99FFFFFF</color>
 
 </resources>

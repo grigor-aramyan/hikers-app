@@ -1,5 +1,7 @@
 package com.example.hikernotes;
 
+import android.app.Activity;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,11 +12,15 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -47,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Realm mRealm;
     private RecyclerView mRecyclerView;
+    private SearchView mSearchView;
     private MainRecyclerListAdapter mListAdapter;
     private RealmList<Tour> mToursList;
     private int SORT_FLAG = 1;
@@ -73,6 +80,14 @@ public class MainActivity extends AppCompatActivity {
         mRealm = Realm.getDefaultInstance();
         mProgressBarLayout = (LinearLayout) findViewById(R.id.progressBarLayoutId);
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_list);
+        mSearchView = (SearchView) findViewById(R.id.searchView);
+
+        SearchManager searchManager =
+                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView =
+                (SearchView) findViewById(R.id.searchView);
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(getComponentName()));
 
         SharedPreferences sharedPreferences = getSharedPreferences("sort_type", Context.MODE_PRIVATE);
         SORT_FLAG = sharedPreferences.getInt("sort_by", 1);
@@ -157,8 +172,8 @@ public class MainActivity extends AppCompatActivity {
             subMenu.add(1, currentTour.getId(), Menu.NONE, "Current Stars");
         }
 
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
         return true;
     }
 
@@ -237,12 +252,14 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(String response) {
                 if (response.startsWith("got it")) {
                     mRecyclerView.setVisibility(View.GONE);
+                    mSearchView.setVisibility(View.GONE);
                     mProgressBarLayout.setVisibility(View.VISIBLE);
                     updateLocalDBAndPopulateList();
                 } else if (!mIsLocalDBEmpty) {
                     Toast.makeText(getApplicationContext(), "Data is from local DB", Toast.LENGTH_LONG).show();
                     mProgressBarLayout.setVisibility(View.GONE);
                     mRecyclerView.setVisibility(View.VISIBLE);
+                    mSearchView.setVisibility(View.VISIBLE);
                     populateToursRecyclerView();
                 } else {
                     Intent intent = new Intent(getApplicationContext(), EmptyActivity.class);
@@ -257,6 +274,7 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Data is from local DB", Toast.LENGTH_LONG).show();
                     mProgressBarLayout.setVisibility(View.GONE);
                     mRecyclerView.setVisibility(View.VISIBLE);
+                    mSearchView.setVisibility(View.VISIBLE);
                     populateToursRecyclerView();
                 } else {
                     Intent intent = new Intent(getApplicationContext(), EmptyActivity.class);
@@ -309,6 +327,7 @@ public class MainActivity extends AppCompatActivity {
 
                     mProgressBarLayout.setVisibility(View.GONE);
                     mRecyclerView.setVisibility(View.VISIBLE);
+                    mSearchView.setVisibility(View.VISIBLE);
                     populateToursRecyclerView();
 
                 }
@@ -324,6 +343,32 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         VolleyRequests.getQueue(getApplicationContext()).add(jsonArrayRequest);
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        View v = getCurrentFocus();
+
+        if (v != null &&
+                (ev.getAction() == MotionEvent.ACTION_UP || ev.getAction() == MotionEvent.ACTION_MOVE) &&
+                v instanceof EditText &&
+                !v.getClass().getName().startsWith("android.webkit.")) {
+            int scrcoords[] = new int[2];
+            v.getLocationOnScreen(scrcoords);
+            float x = ev.getRawX() + v.getLeft() - scrcoords[0];
+            float y = ev.getRawY() + v.getTop() - scrcoords[1];
+
+            if (x < v.getLeft() || x > v.getRight() || y < v.getTop() || y > v.getBottom())
+                hideKeyboard(this);
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    public static void hideKeyboard(Activity activity) {
+        if (activity != null && activity.getWindow() != null && activity.getWindow().getDecorView() != null) {
+            InputMethodManager imm = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(activity.getWindow().getDecorView().getWindowToken(), 0);
+        }
     }
 
 }
