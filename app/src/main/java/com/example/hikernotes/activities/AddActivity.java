@@ -328,13 +328,39 @@ public class AddActivity extends AppCompatActivity {
                                                         if (null == mImageUris.get(i))
                                                             continue;
                                                         String imagePath = getPathFromURI(mImageUris.get(i));
-                                                        //Log.e("nnn", uri.toString());
+
                                                         MultipartUploadRequest request = new MultipartUploadRequest(getApplication(), VolleyRequests.sUrlForImageUploads)
                                                                 .setAutoDeleteFilesAfterSuccessfulUpload(false)
                                                                 .setMaxRetries(3)
                                                                 .addParameter("tourid", new_tour_id + "")
                                                                 .addFileToUpload(imagePath, "myimage");
                                                         request.setDelegate(mUploadStatusDelegate).startUpload();
+                                                    }
+
+                                                    SharedPreferences sharedPreferences1 = getSharedPreferences(MapsActivity.ON_MAP_IMAGES_PREFERENCE, MODE_PRIVATE);
+                                                    String onMapImagesEncoded = sharedPreferences1.getString(MapsActivity.ON_MAP_IMAGES_KEY, "");
+                                                    if (!onMapImagesEncoded.isEmpty()) {
+                                                        String[] onMapImages = onMapImagesEncoded.split("YYY");
+                                                        ArrayList<String> imageReferences = new ArrayList<>();
+                                                        ArrayList<String> imageCoordinates = new ArrayList<>();
+                                                        String[] imageInfo;
+                                                        for (String s: onMapImages) {
+                                                            imageInfo = s.split("::");
+                                                            imageReferences.add(imageInfo[0]);
+                                                            imageCoordinates.add(imageInfo[1]);
+                                                        }
+
+                                                        for (int j = 0; j < imageReferences.size(); j++) {
+                                                            MultipartUploadRequest request = new MultipartUploadRequest(getApplication(), VolleyRequests.sUrlForOnMapImagesUpload)
+                                                                    .setAutoDeleteFilesAfterSuccessfulUpload(false)
+                                                                    .setMaxRetries(3)
+                                                                    .addParameter("tourid", new_tour_id + "")
+                                                                    .addParameter("imagecoord", imageCoordinates.get(j))
+                                                                    .addFileToUpload(imageReferences.get(j), "myimage");
+                                                            request.setDelegate(mUploadStatusDelegate).startUpload();
+                                                        }
+
+                                                        clearOnMapImagesSharedPref();
                                                     }
 
                                                 }
@@ -509,6 +535,13 @@ public class AddActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences(LocationUpdateService.sSharedPrefForFixedLocations, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.remove("locations");
+        editor.commit();
+    }
+
+    private void clearOnMapImagesSharedPref() {
+        SharedPreferences sharedPreferences = getSharedPreferences(MapsActivity.ON_MAP_IMAGES_PREFERENCE, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove(MapsActivity.ON_MAP_IMAGES_KEY);
         editor.commit();
     }
 

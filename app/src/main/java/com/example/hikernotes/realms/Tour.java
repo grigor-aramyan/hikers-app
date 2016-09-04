@@ -19,19 +19,29 @@ public class Tour extends RealmObject {
     private int likes;
     private String img_references_str;
     private String trail;
+    private String onMapImages;
 
     public Tour() {
     }
 
-    public Tour(int id, String author, String title, Date date, String info, int likes, String trail, String img_references) {
+    public Tour(int id, String author, String title, Date date, String info, int likes, String img_references_str, String trail, String onMapImages) {
         this.id = id;
         this.author = author;
         this.title = title;
         this.date = date;
         this.info = info;
         this.likes = likes;
-        this.img_references_str = img_references;
+        this.img_references_str = img_references_str;
         this.trail = trail;
+        this.onMapImages = onMapImages;
+    }
+
+    public String getOnMapImages() {
+        return onMapImages;
+    }
+
+    public void setOnMapImages(String onMapImages) {
+        this.onMapImages = onMapImages;
     }
 
     public int getId() {

@@ -295,7 +295,7 @@ public class MainActivity extends AppCompatActivity {
                 if (response.length() > 1) {
                     JSONObject jsonObject;
                     Tour tour = null;
-                    String title, date, references, author, info, trail;
+                    String title, date, references, author, info, trail, onMapImages;
                     int id, likes;
                     for (int i = 0; i < (response.length() - 1); i++) {
                         try {
@@ -308,12 +308,13 @@ public class MainActivity extends AppCompatActivity {
                             id = jsonObject.getInt("id");
                             likes = jsonObject.getInt("likes");
                             trail = jsonObject.getString("trail");
+                            onMapImages = jsonObject.getString("onmapimages");
 
                             SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
 
                             mRealm.beginTransaction();
                             try {
-                                tour = new Tour(id, author, title, formatter.parse(date), info, likes, trail, references);
+                                tour = new Tour(id, author, title, formatter.parse(date), info, likes, references, trail, onMapImages);
                             } catch (ParseException pExp) {
                                 if (null == tour) {
                                     Toast.makeText(getApplicationContext(), "Major problem occured!! Sorry, guys. Doing best to make it better!!", Toast.LENGTH_LONG).show();

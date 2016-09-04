@@ -60,7 +60,7 @@ public class DetailsActivity extends AppCompatActivity {
     private RequestQueue mRequestQueue;
     private View.OnClickListener mClickListener;
     public static int mSelectedTourID;
-    private String mTrail, mTitle;
+    private String mTrail, mTitle, mOnMapImages;
     private AddCommentBlock mAddCommentBlock;
     private ShowCommentsBlock mShowCommentsBlock;
     private ArrayList<ImageView> mImagesForTour = new ArrayList<>();
@@ -100,6 +100,7 @@ public class DetailsActivity extends AppCompatActivity {
             author_txt.setText("Author: " + tour.getAuthor().toUpperCase());
             info_txt.setText(tour.getInfo());
             mTrail = tour.getTrail();
+            mOnMapImages = tour.getOnMapImages();
 
             int image_size_in_px = (int) MeasureUnitConversionUtils.convertDpToPixel(150.0f, this);
 
@@ -151,6 +152,8 @@ public class DetailsActivity extends AppCompatActivity {
             case R.id.action_map:
                 Intent intent = new Intent(getApplication(), MapsActivity.class);
                 intent.putExtra("trail", mTrail);
+                intent.putExtra("on-map-images", mOnMapImages);
+                intent.putExtra("from-details", 2);
                 startActivity(intent);
                 return true;
             case R.id.action_delete_trail:
@@ -192,7 +195,6 @@ public class DetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Log.e("mmm","1 image onClick");
                 mPreviewViewPager.setVisibility(View.VISIBLE);
                 mPreviewViewPager.setCurrentItem(0,false);
             }
@@ -201,7 +203,6 @@ public class DetailsActivity extends AppCompatActivity {
         image_two.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.e("mmm","2 image onClick");
                 mPreviewViewPager.setVisibility(View.VISIBLE);
                 mPreviewViewPager.setCurrentItem(1,false);
             }
@@ -210,7 +211,6 @@ public class DetailsActivity extends AppCompatActivity {
         image_tree.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.e("mmm","2 image onClick");
                 mPreviewViewPager.setVisibility(View.VISIBLE);
                 mPreviewViewPager.setCurrentItem(1,false);
             }
@@ -219,7 +219,6 @@ public class DetailsActivity extends AppCompatActivity {
         image_four.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.e("mmm","2 image onClick");
                 mPreviewViewPager.setVisibility(View.VISIBLE);
                 mPreviewViewPager.setCurrentItem(1,false);
             }
@@ -228,7 +227,6 @@ public class DetailsActivity extends AppCompatActivity {
         image_five.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.e("mmm","2 image onClick");
                 mPreviewViewPager.setVisibility(View.VISIBLE);
                 mPreviewViewPager.setCurrentItem(1,false);
             }
@@ -400,7 +398,7 @@ public class DetailsActivity extends AppCompatActivity {
         private ImageView mImageHolder;
         private String mImagePath;
 
-        static PageFragment newInstance(int page, String imagePath) {
+        public static PageFragment newInstance(int page, String imagePath) {
             PageFragment pageFragment = new PageFragment();
             Bundle arguments = new Bundle();
             arguments.putInt(ARGUMENT_PAGE_NUMBER, page);

@@ -3,6 +3,7 @@ package com.example.hikernotes.consumptions;
 import android.content.Context;
 
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 /**
@@ -17,6 +18,7 @@ public class VolleyRequests {
     public static String sUrlForImageUploads = "http://hikingapp.net23.net/storetourimages.php";
     public static String sUrlForNewComment = "http://hikingapp.net23.net/addnewcomment.php";
     public static String sUrlForPullingComments = "http://hikingapp.net23.net/pullcomments.php";
+    public static String sUrlForOnMapImagesUpload = "http://hikingapp.net23.net/addonmapimages.php";
 
     public static RequestQueue sQueue = null;
 
