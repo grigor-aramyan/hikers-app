@@ -53,13 +53,115 @@ import io.realm.RealmResults;
  * Created by John on 8/16/2016.
  */
 public class DetailsActivity extends AppCompatActivity {
+    public static int mSelectedTourID;
+    private View.OnClickListener mClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()){
+                case R.id.upvote_btn_id:
+                    StringRequest stringRequest = new StringRequest(Request.Method.POST, VolleyRequests.sUrlForVoting, new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            if (response.startsWith("done")) {
+                                RealmResults<Tour> realmResults = mRealm.where(Tour.class).equalTo("id", mSelectedTourID).findAll();
+                                if (realmResults.size() > 0) {
+                                    Tour tour = realmResults.get(0);
+                                    int tour_likes = tour.getLikes();
+                                    mRealm.beginTransaction();
+                                    tour.setLikes(tour_likes + 1);
+                                    mRealm.copyToRealmOrUpdate(tour);
+                                    mRealm.commitTransaction();
+
+                                    likes_txt.setText("" + (tour_likes + 1));
+                                    likes_txt.setTextColor(getResources().getColor(R.color.colorMaterialGreen));
+
+                                    upvote_img_btn.setClickable(false);
+                                }
+
+                                Toast.makeText(getApplication(), "Upvoted", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(getApplication(), "Sorry! Some problem occurs", Toast.LENGTH_LONG).show();
+                        }
+                    }) {
+                        @Override
+                        protected Map<String, String> getParams() throws AuthFailureError {
+                            Map<String, String> params = new HashMap<>();
+                            params.put("flag", 1 + "");
+                            params.put("id", mSelectedTourID + "");
+                            return params;
+                        }
+
+                        @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            Map<String, String> params = new HashMap<>();
+                            params.put("Content-Type", "application/x-www-form-urlencoded");
+                            return params;
+                        }
+                    };
+                    mRequestQueue.add(stringRequest);
+                    break;
+                case R.id.downvote_btn_id:
+                    StringRequest stringRequest1 = new StringRequest(Request.Method.POST, VolleyRequests.sUrlForVoting, new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            if (response.startsWith("done")){
+                                RealmResults<Tour> realmResults = mRealm.where(Tour.class).equalTo("id", mSelectedTourID).findAll();
+                                if (realmResults.size() > 0) {
+                                    Tour tour = realmResults.get(0);
+                                    int tour_likes = tour.getLikes();
+                                    mRealm.beginTransaction();
+                                    tour.setLikes(tour_likes - 1);
+                                    mRealm.copyToRealmOrUpdate(tour);
+                                    mRealm.commitTransaction();
+
+                                    likes_txt.setText("" + (tour_likes - 1));
+                                    likes_txt.setTextColor(getResources().getColor(R.color.colorMaterialRed));
+
+                                    downvote_img_btn.setClickable(false);
+                                }
+
+                                Toast.makeText(getApplication(), "Downvoted", Toast.LENGTH_LONG).show();
+                            }
+
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(getApplication(), "Sorry! Some problem occurs", Toast.LENGTH_LONG).show();
+                        }
+                    }) {
+                        @Override
+                        protected Map<String, String> getParams() throws AuthFailureError {
+                            Map<String, String> params = new HashMap<>();
+                            params.put("flag", 2 + "");
+                            params.put("id", mSelectedTourID + "");
+                            return params;
+                        }
+
+                        @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            Map<String, String> params = new HashMap<>();
+                            params.put("Content-Type", "application/x-www-form-urlencoded");
+                            return params;
+                        }
+                    };
+                    mRequestQueue.add(stringRequest1);
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    };
     private TextView title_txt, date_txt, author_txt, info_txt, likes_txt;
     private ImageView map_image, image_one, image_two, image_tree, image_four, image_five;
     private ImageView upvote_img_btn, downvote_img_btn;
     private Realm mRealm;
     private RequestQueue mRequestQueue;
-    private View.OnClickListener mClickListener;
-    public static int mSelectedTourID;
     private String mTrail, mTitle, mOnMapImages;
     private AddCommentBlock mAddCommentBlock;
     private ShowCommentsBlock mShowCommentsBlock;
@@ -85,7 +187,6 @@ public class DetailsActivity extends AppCompatActivity {
         mRealm = Realm.getDefaultInstance();
         mRequestQueue = Volley.newRequestQueue(this);
 
-        initInterfaces();
         initViews();
 
 
@@ -107,8 +208,10 @@ public class DetailsActivity extends AppCompatActivity {
             mImg_refs = tour.getImg_references_str().split("---");
 
             for (int i = 0; i < mImg_refs.length; i++) {
-                Picasso.with(this).load(mImg_refs[i]).placeholder(R.drawable.loader)
-                        .error(R.drawable.noimageavailable).resize(image_size_in_px, image_size_in_px).centerCrop().into(mImagesForTour.get(i));
+                Picasso.with(getApplicationContext()).load(mImg_refs[i]).placeholder(R.drawable.loader)
+                        .error(R.drawable.noimageavailable)
+                        .resize(image_size_in_px, image_size_in_px).centerCrop()
+                .into(mImagesForTour.get(i));
             }
 
         }
@@ -255,113 +358,6 @@ public class DetailsActivity extends AppCompatActivity {
             }
         });
 
-
-    }
-
-    private void initInterfaces() {
-        mClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switch (v.getId()){
-                    case R.id.upvote_btn_id:
-                        StringRequest stringRequest = new StringRequest(Request.Method.POST, VolleyRequests.sUrlForVoting, new Response.Listener<String>() {
-                            @Override
-                            public void onResponse(String response) {
-                                if (response.startsWith("done")) {
-                                    RealmResults<Tour> realmResults = mRealm.where(Tour.class).equalTo("id", mSelectedTourID).findAll();
-                                    if (realmResults.size() > 0) {
-                                        Tour tour = realmResults.get(0);
-                                        int tour_likes = tour.getLikes();
-                                        mRealm.beginTransaction();
-                                        tour.setLikes(tour_likes + 1);
-                                        mRealm.copyToRealmOrUpdate(tour);
-                                        mRealm.commitTransaction();
-
-                                        likes_txt.setText("" + (tour_likes + 1));
-                                        likes_txt.setTextColor(getResources().getColor(R.color.colorMaterialGreen));
-
-                                        upvote_img_btn.setClickable(false);
-                                    }
-
-                                    Toast.makeText(getApplication(), "Upvoted", Toast.LENGTH_LONG).show();
-                                }
-                            }
-                        }, new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                Toast.makeText(getApplication(), "Sorry! Some problem occurs", Toast.LENGTH_LONG).show();
-                            }
-                        }) {
-                            @Override
-                            protected Map<String, String> getParams() throws AuthFailureError {
-                                Map<String, String> params = new HashMap<>();
-                                params.put("flag", 1 + "");
-                                params.put("id", mSelectedTourID + "");
-                                return params;
-                            }
-
-                            @Override
-                            public Map<String, String> getHeaders() throws AuthFailureError {
-                                Map<String, String> params = new HashMap<>();
-                                params.put("Content-Type", "application/x-www-form-urlencoded");
-                                return params;
-                            }
-                        };
-                        mRequestQueue.add(stringRequest);
-                        break;
-                    case R.id.downvote_btn_id:
-                        StringRequest stringRequest1 = new StringRequest(Request.Method.POST, VolleyRequests.sUrlForVoting, new Response.Listener<String>() {
-                            @Override
-                            public void onResponse(String response) {
-                                if (response.startsWith("done")){
-                                    RealmResults<Tour> realmResults = mRealm.where(Tour.class).equalTo("id", mSelectedTourID).findAll();
-                                    if (realmResults.size() > 0) {
-                                        Tour tour = realmResults.get(0);
-                                        int tour_likes = tour.getLikes();
-                                        mRealm.beginTransaction();
-                                        tour.setLikes(tour_likes - 1);
-                                        mRealm.copyToRealmOrUpdate(tour);
-                                        mRealm.commitTransaction();
-
-                                        likes_txt.setText("" + (tour_likes - 1));
-                                        likes_txt.setTextColor(getResources().getColor(R.color.colorMaterialRed));
-
-                                        downvote_img_btn.setClickable(false);
-                                    }
-
-                                    Toast.makeText(getApplication(), "Downvoted", Toast.LENGTH_LONG).show();
-                                }
-
-                            }
-                        }, new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                Toast.makeText(getApplication(), "Sorry! Some problem occurs", Toast.LENGTH_LONG).show();
-                            }
-                        }) {
-                            @Override
-                            protected Map<String, String> getParams() throws AuthFailureError {
-                                Map<String, String> params = new HashMap<>();
-                                params.put("flag", 2 + "");
-                                params.put("id", mSelectedTourID + "");
-                                return params;
-                            }
-
-                            @Override
-                            public Map<String, String> getHeaders() throws AuthFailureError {
-                                Map<String, String> params = new HashMap<>();
-                                params.put("Content-Type", "application/x-www-form-urlencoded");
-                                return params;
-                            }
-                        };
-                        mRequestQueue.add(stringRequest1);
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-        };
     }
 
     @Override
@@ -418,7 +414,7 @@ public class DetailsActivity extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View view = inflater.inflate(R.layout.fragment, null);
             mImageHolder = (ImageView) view.findViewById(R.id.preview_image_holder);
-            Picasso.with(getActivity()).load(mImagePath).placeholder(R.drawable.loader)
+            Picasso.with(getActivity().getApplicationContext()).load(mImagePath).placeholder(R.drawable.loader)
                     .error(R.drawable.noimageavailable).into(mImageHolder);
             return view;
         }

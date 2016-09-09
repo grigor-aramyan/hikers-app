@@ -30,29 +30,71 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
  * Created by John on 8/17/2016.
  */
 public class LocationUpdateService extends Service {
-    private GoogleApiClient mGoogleApiClient;
-    private GoogleApiClient.OnConnectionFailedListener mConnectionFailedListener;
-    private GoogleApiClient.ConnectionCallbacks mConnectionCallbacks;
-    private ResultCallback<LocationSettingsResult> mLocationSettingsResultCallback;
-    private LocationListener mLocationListener;
-    private LocationRequest mLocationRequest;
-    public static Activity sActivity;
     public static final int REQUEST_CODE_FOR_RESOLUTION_REQUEST = 1;
+    public static Activity sActivity;
+    public static String sSharedPrefForFixedLocations = "locationsBase";
+    private GoogleApiClient.OnConnectionFailedListener mConnectionFailedListener = new GoogleApiClient.OnConnectionFailedListener() {
+        @Override
+        public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+            Toast.makeText(getApplication(), "Sorry! No connection to update location!!", Toast.LENGTH_LONG).show();
+        }
+    };
+    private GoogleApiClient.ConnectionCallbacks mConnectionCallbacks = new GoogleApiClient.ConnectionCallbacks() {
+        @Override
+        public void onConnected(@Nullable Bundle bundle) {
+            Location location = null;
+            try {
+                location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            } catch (SecurityException se){
+                Toast.makeText(getApplication(), "security exception", Toast.LENGTH_LONG).show();
+            }
+
+            if (location != null) {
+                saveCoordinatesInSharedPreference(location);
+                NotificationUtils.showUpdatedLocationNotification(getApplication(), location.getLatitude(), location.getLongitude());
+            } else {
+                Toast.makeText(getApplication(), "Null location!!", Toast.LENGTH_LONG).show();
+            }
+
+            checkLocationSettings();
+        }
+
+        @Override
+        public void onConnectionSuspended(int i) {
+
+        }
+    };
+    private ResultCallback<LocationSettingsResult> mLocationSettingsResultCallback = new ResultCallback<LocationSettingsResult>() {
+        @Override
+        public void onResult(@NonNull LocationSettingsResult locationSettingsResult) {
+            Status status = locationSettingsResult.getStatus();
+            switch (status.getStatusCode()) {
+                case LocationSettingsStatusCodes.SUCCESS:
+                    startLocationUpdates();
+                    break;
+                case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                    try {
+                        status.startResolutionForResult(sActivity, REQUEST_CODE_FOR_RESOLUTION_REQUEST);
+                    } catch (IntentSender.SendIntentException se) {}
+                    break;
+            }
+        }
+    };
+    private LocationListener mLocationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(Location location) {
+            saveCoordinatesInSharedPreference(location);
+            NotificationUtils.showUpdatedLocationNotification(getApplication(), location.getLatitude(), location.getLongitude());
+        }
+    };
+    private LocationRequest mLocationRequest;
+    private GoogleApiClient mGoogleApiClient;
     // ToDo: make this fields available for user input
     private long mLocationUpdateInterval = 10000L;
     private long mLocationUpdateIntervalFastest = 5000L;
-    public static String sSharedPrefForFixedLocations = "locationsBase";
 
     @Override
     public void onCreate() {
-        if (mConnectionFailedListener == null)
-            initConnectionFailedListener();
-        if (mConnectionCallbacks == null)
-            initConnectionsCallbacks();
-        if (mLocationSettingsResultCallback == null)
-            initLocationSettingsResultCallback();
-        if (mLocationListener == null)
-            initLocationListener();
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addOnConnectionFailedListener(mConnectionFailedListener)
@@ -82,72 +124,6 @@ public class LocationUpdateService extends Service {
     @Override
     public void onDestroy() {
         mGoogleApiClient.disconnect();
-    }
-
-    private void initConnectionFailedListener() {
-        mConnectionFailedListener = new GoogleApiClient.OnConnectionFailedListener() {
-            @Override
-            public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                Toast.makeText(getApplication(), "Sorry! No connection to update location!!", Toast.LENGTH_LONG).show();
-            }
-        };
-    }
-
-    private void initConnectionsCallbacks() {
-        mConnectionCallbacks = new GoogleApiClient.ConnectionCallbacks() {
-            @Override
-            public void onConnected(@Nullable Bundle bundle) {
-                Location location = null;
-                try {
-                    location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                } catch (SecurityException se){
-                    Toast.makeText(getApplication(), "security exception", Toast.LENGTH_LONG).show();
-                }
-
-                if (location != null) {
-                    saveCoordinatesInSharedPreference(location);
-                    NotificationUtils.showUpdatedLocationNotification(getApplication(), location.getLatitude(), location.getLongitude());
-                } else {
-                    Toast.makeText(getApplication(), "Null location!!", Toast.LENGTH_LONG).show();
-                }
-
-                checkLocationSettings();
-            }
-
-            @Override
-            public void onConnectionSuspended(int i) {
-
-            }
-        };
-    }
-
-    private void initLocationSettingsResultCallback() {
-        mLocationSettingsResultCallback = new ResultCallback<LocationSettingsResult>() {
-            @Override
-            public void onResult(@NonNull LocationSettingsResult locationSettingsResult) {
-                Status status = locationSettingsResult.getStatus();
-                switch (status.getStatusCode()) {
-                    case LocationSettingsStatusCodes.SUCCESS:
-                        startLocationUpdates();
-                        break;
-                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                        try {
-                            status.startResolutionForResult(sActivity, REQUEST_CODE_FOR_RESOLUTION_REQUEST);
-                        } catch (IntentSender.SendIntentException se) {}
-                        break;
-                }
-            }
-        };
-    }
-
-    private void initLocationListener() {
-        mLocationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                saveCoordinatesInSharedPreference(location);
-                NotificationUtils.showUpdatedLocationNotification(getApplication(), location.getLatitude(), location.getLongitude());
-            }
-        };
     }
 
     public void checkLocationSettings() {

@@ -29,11 +29,22 @@ import java.util.Map;
  * Created by John on 8/18/2016.
  */
 public class AddCommentBlock extends FrameLayout {
+    private OnClickListener mClickListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.react_button_id:
+                    ShowDialogAndGetName();
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+    private OnCommentAdded mCommentAdded;
     private String mName = null;
     private EditText  comment_edt;
     private Button react_btn;
-    private OnClickListener mClickListener;
-    private OnCommentAdded mCommentAdded;
     private RequestQueue mQueue;
     private int mSelectedTourId;
 
@@ -42,7 +53,6 @@ public class AddCommentBlock extends FrameLayout {
         super(context);
         this.mSelectedTourId = DetailsActivity.mSelectedTourID;
         mQueue = Volley.newRequestQueue(context);
-        initInterfaces();
         initViews();
     }
 
@@ -50,24 +60,7 @@ public class AddCommentBlock extends FrameLayout {
         super(context, attrs);
         this.mSelectedTourId = DetailsActivity.mSelectedTourID;
         mQueue = Volley.newRequestQueue(context);
-        initInterfaces();
         initViews();
-    }
-
-    private void initInterfaces() {
-        String inputedName;
-        mClickListener = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switch (v.getId()) {
-                    case R.id.react_button_id:
-                        ShowDialogAndGetName();
-                        break;
-                    default:
-                        break;
-                }
-            }
-        };
     }
 
 
@@ -189,12 +182,11 @@ public class AddCommentBlock extends FrameLayout {
 
 
     public interface OnCommentAdded {
-        public void updateCommentsList();
+        void updateCommentsList();
     }
 
     public void setOnCommentAdded(OnCommentAdded onCommentAdded) {
         mCommentAdded = onCommentAdded;
     }
-
 
 }

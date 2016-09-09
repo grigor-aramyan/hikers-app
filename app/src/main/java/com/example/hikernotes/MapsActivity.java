@@ -39,6 +39,9 @@ import java.util.Date;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
+    private final int MAKE_A_SHOT_REQUEST_CODE = 22;
+    public static final String ON_MAP_IMAGES_KEY = "saved-on-map-images";
+    public static final String ON_MAP_IMAGES_PREFERENCE = "saved-on-map-images-preference";
     private GoogleMap mMap;
     private String mTrail;
     private boolean mCurrentLocationEnabled = false, fromDetails = false;
@@ -46,9 +49,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ArrayList<String> mOnMapImageCoordinates;
     private ArrayList<String> mOnMapImageReferencesCurrent, mOnMapImageCoordinatesCurrent;
     private ImageView mTakeAShot;
-    private final int MAKE_A_SHOT_REQUEST_CODE = 22;
-    public static final String ON_MAP_IMAGES_KEY = "saved-on-map-images";
-    public static final String ON_MAP_IMAGES_PREFERENCE = "saved-on-map-images-preference";
     private String mCurrentPhotoPath;
     private ViewPager mPreviewViewPager;
     private MyFragmentPagerAdapter mPagerAdapter;
@@ -338,7 +338,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View view = inflater.inflate(R.layout.fragment, null);
             mImageHolder = (ImageView) view.findViewById(R.id.preview_image_holder);
-            Log.e("xxx", "width: " + mImageHolder.getMeasuredWidth() + " height: " + mImageHolder.getMeasuredHeight());
             Picasso.with(getActivity()).load(mImagePath).placeholder(R.drawable.loader)
                     .error(R.drawable.noimageavailable).into(mImageHolder);
             return view;
