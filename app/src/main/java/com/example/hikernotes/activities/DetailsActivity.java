@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,6 +18,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -188,7 +190,6 @@ public class DetailsActivity extends AppCompatActivity {
         mRequestQueue = Volley.newRequestQueue(this);
 
         initViews();
-
 
         RealmResults<Tour> realmResults = mRealm.where(Tour.class).equalTo("id", mSelectedTourID).findAll();
         if (realmResults.size() > 0) {
@@ -414,8 +415,13 @@ public class DetailsActivity extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View view = inflater.inflate(R.layout.fragment, null);
             mImageHolder = (ImageView) view.findViewById(R.id.preview_image_holder);
+            WindowManager wm = (WindowManager) getContext().getSystemService(getContext().WINDOW_SERVICE);
+            DisplayMetrics metrics = new DisplayMetrics();
+            wm.getDefaultDisplay().getMetrics(metrics);
+            int imageSize;
+            imageSize = Math.min(metrics.heightPixels, metrics.widthPixels);
             Picasso.with(getActivity().getApplicationContext()).load(mImagePath).placeholder(R.drawable.loader)
-                    .error(R.drawable.noimageavailable).into(mImageHolder);
+                    .error(R.drawable.noimageavailable).resize(imageSize, imageSize).centerCrop().into(mImageHolder);
             return view;
         }
     }
