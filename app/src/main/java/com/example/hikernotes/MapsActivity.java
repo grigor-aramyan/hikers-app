@@ -11,13 +11,16 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.hikernotes.activities.DetailsActivity;
 import com.example.hikernotes.services.LocationUpdateService;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -29,7 +32,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
@@ -69,7 +71,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mPreviewViewPager = (ViewPager) findViewById(R.id.img_preview_holder);
         mPagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager());
-        mPreviewViewPager.setOffscreenPageLimit(mOnMapImageReferences.size());
+        mPreviewViewPager.setOffscreenPageLimit(2);
         mPreviewViewPager.setAdapter(mPagerAdapter);
 
         mTakeAShot = (ImageView) findViewById(R.id.make_shot_id);
@@ -338,8 +340,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View view = inflater.inflate(R.layout.fragment, null);
             mImageHolder = (ImageView) view.findViewById(R.id.preview_image_holder);
-            Picasso.with(getActivity()).load(mImagePath).placeholder(R.drawable.loader)
-                    .error(R.drawable.noimageavailable).into(mImageHolder);
+            WindowManager wm = (WindowManager) getContext().getSystemService(getContext().WINDOW_SERVICE);
+            DisplayMetrics metrics = new DisplayMetrics();
+            wm.getDefaultDisplay().getMetrics(metrics);
+            int imageSize;
+            imageSize = Math.min(metrics.heightPixels, metrics.widthPixels);
+
+            Glide.with(getContext()).load(mImagePath)
+                    .placeholder(R.drawable.loader)
+                    .error(R.drawable.noimageavailable)
+                    .override(imageSize, imageSize).centerCrop().dontAnimate()
+                    .into(mImageHolder);
+
             return view;
         }
     }

@@ -10,11 +10,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.hikernotes.R;
 import com.example.hikernotes.realms.Tour;
 import com.example.hikernotes.activities.DetailsActivity;
 import com.example.hikernotes.utils.MeasureUnitConversionUtils;
-import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 
@@ -86,8 +86,7 @@ public class MainRecyclerListAdapter extends RecyclerView.Adapter<MainRecyclerLi
 
         String[] img_refs = tour.getImg_references_str().split("---");
 
-        Picasso.with(mContext).load(img_refs[0]).resize(thumb_width_in_px, thumb_height_in_px).centerCrop().into(holder.mImageView);
-
+        Glide.with(mContext).load(img_refs[0]).override(thumb_width_in_px, thumb_height_in_px).centerCrop().into(holder.mImageView);
     }
 
     @Override

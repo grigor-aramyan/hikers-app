@@ -31,13 +31,13 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 import com.example.hikernotes.MapsActivity;
 import com.example.hikernotes.R;
 import com.example.hikernotes.consumptions.VolleyRequests;
 import com.example.hikernotes.realms.CurrentTour;
 import com.example.hikernotes.services.LocationUpdateService;
 import com.example.hikernotes.utils.MeasureUnitConversionUtils;
-import com.squareup.picasso.Picasso;
 
 import net.gotev.uploadservice.MultipartUploadRequest;
 import net.gotev.uploadservice.ServerResponse;
@@ -444,14 +444,15 @@ public class AddActivity extends AppCompatActivity {
         if (uri_qnt == 0)
             return;
         for (int i = 0; i < uri_qnt; i++) {
-            Picasso.with(this).load(new File(mImage_uris.get(i).toString())).resize(mImageSizeInPx, mImageSizeInPx).centerCrop().into(tour_images.get(i));
+            Glide.with(this).load(new File(mImage_uris.get(i).toString())).override(mImageSizeInPx, mImageSizeInPx).centerCrop().into(tour_images.get(i));
         }
 
         int remaining_view_count = IMAGES_MAX_QNTY - uri_qnt;
         if (remaining_view_count == 0)
             return;
 
-        Picasso.with(this).load(R.drawable.add_button).resize(mImageSizeInPx, mImageSizeInPx).centerCrop().into(tour_images.get(uri_qnt));
+        Glide.with(this).load(R.drawable.add_button).override(mImageSizeInPx, mImageSizeInPx).centerCrop().into(tour_images.get(uri_qnt));
+
         tour_images.get(uri_qnt).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -597,7 +598,7 @@ public class AddActivity extends AppCompatActivity {
                 if (null != selectedImageUri) {
 
                     if (!selectedImageUri.toString().isEmpty()) {
-                        Picasso.with(this).load(selectedImageUri).resize(200, 200).centerCrop().into(mImg);
+                        Glide.with(this).load(selectedImageUri).override(200, 200).centerCrop().into(mImg);
                         mImg.setVisibility(View.VISIBLE);
                         mImageUris.set(i, selectedImageUri);
                         size ++;

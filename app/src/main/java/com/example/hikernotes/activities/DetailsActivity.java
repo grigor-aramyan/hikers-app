@@ -33,6 +33,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 import com.example.hikernotes.MapsActivity;
 import com.example.hikernotes.R;
 import com.example.hikernotes.consumptions.VolleyRequests;
@@ -41,7 +42,6 @@ import com.example.hikernotes.realms.SavedTrail;
 import com.example.hikernotes.utils.MeasureUnitConversionUtils;
 import com.example.hikernotes.widgets.AddCommentBlock;
 import com.example.hikernotes.widgets.ShowCommentsBlock;
-import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -209,17 +209,19 @@ public class DetailsActivity extends AppCompatActivity {
             mImg_refs = tour.getImg_references_str().split("---");
 
             for (int i = 0; i < mImg_refs.length; i++) {
-                Picasso.with(getApplicationContext()).load(mImg_refs[i]).placeholder(R.drawable.loader)
+                Glide.with(this).load(mImg_refs[i])
+                        .placeholder(R.drawable.loader)
                         .error(R.drawable.noimageavailable)
-                        .resize(image_size_in_px, image_size_in_px).centerCrop()
-                .into(mImagesForTour.get(i));
+                        .override(image_size_in_px, image_size_in_px).centerCrop()
+                        .dontAnimate()
+                        .into(mImagesForTour.get(i));
             }
 
         }
 
         mPreviewViewPager = (ViewPager) findViewById(R.id.img_preview_holder);
         mPagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager());
-        mPreviewViewPager.setOffscreenPageLimit(mImg_refs.length);
+        mPreviewViewPager.setOffscreenPageLimit(2);
         mPreviewViewPager.setAdapter(mPagerAdapter);
 
         // chunk needs some  work yet
@@ -420,8 +422,13 @@ public class DetailsActivity extends AppCompatActivity {
             wm.getDefaultDisplay().getMetrics(metrics);
             int imageSize;
             imageSize = Math.min(metrics.heightPixels, metrics.widthPixels);
-            Picasso.with(getActivity().getApplicationContext()).load(mImagePath).placeholder(R.drawable.loader)
-                    .error(R.drawable.noimageavailable).resize(imageSize, imageSize).centerCrop().into(mImageHolder);
+
+            Glide.with(getContext()).load(mImagePath)
+                    .placeholder(R.drawable.loader)
+                    .error(R.drawable.noimageavailable)
+                    .override(imageSize, imageSize).centerCrop().dontAnimate()
+                    .into(mImageHolder);
+
             return view;
         }
     }
